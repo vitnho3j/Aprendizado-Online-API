@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class Course {
 
     @Positive
     @Column(name = "price", nullable = false)
-    @NotBlank(groups = {CreateCourse.class, UpdateCourse.class})
+    @NotNull(groups = {CreateCourse.class, UpdateCourse.class})
     private Float price;
 
     @Column(name = "description", length = 255, nullable = false)
@@ -55,13 +56,13 @@ public class Course {
     @Size(min = 10, max = 255, groups = {CreateCourse.class, UpdateCourse.class})
     private String description;
 
-    @NotBlank
+    @NotNull
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     private User author;  
 
     @Column(name = "available", nullable = false)
-    @NotBlank
+    @NotNull
     private Boolean available = true;
 
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})

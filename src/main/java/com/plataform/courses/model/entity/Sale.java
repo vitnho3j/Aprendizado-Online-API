@@ -14,7 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,16 +38,14 @@ public class Sale {
     private LocalDateTime timestamp;
 
     @Positive
-    @NotBlank
+    @NotNull
     @Column(name = "value", nullable = false, updatable = false)
     private Float value;
 
-    @NotBlank
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     private User seller;
 
-    @NotBlank
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
     private Course course;
