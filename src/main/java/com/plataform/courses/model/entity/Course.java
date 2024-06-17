@@ -58,7 +58,7 @@ public class Course {
     @Size(min = 10, max = 255, groups = {CreateCourse.class, UpdateCourse.class})
     private String description;
 
-    @NotNull
+    @NotNull(groups = CreateCourse.class)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     private User author;  

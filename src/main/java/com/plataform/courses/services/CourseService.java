@@ -1,5 +1,6 @@
 package com.plataform.courses.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,10 @@ public class CourseService {
     public void delete(Long id){
         Course obj = findById(id);
         this.courseRepository.delete(obj);
+    }
+
+    public List<Course>findAllByAuthorId(Long authorId){
+        List<Course> courses = this.courseRepository.findByAuthor_Id(authorId);
+        return courses;
     }
 }
