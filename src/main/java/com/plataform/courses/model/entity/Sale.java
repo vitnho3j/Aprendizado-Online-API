@@ -45,7 +45,7 @@ public class Sale {
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     private User seller;
-
+    
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
     private Course course;

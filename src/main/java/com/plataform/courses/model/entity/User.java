@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,12 +52,15 @@ public class User {
     @Email
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Course> courses = new ArrayList<Course>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "buyer", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     private List<Purchase> purchases = new ArrayList<Purchase>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Sale> sales = new ArrayList<Sale>();
 }
