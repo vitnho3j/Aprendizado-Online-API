@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -46,6 +47,7 @@ public class User {
     @CPF
     @Size(min = 11, max = 11)
     @NotBlank(groups = {CreateUser.class, UpdateUser.class})
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String cpf;
 
     @Column(name = "email", length = 256, nullable = false)

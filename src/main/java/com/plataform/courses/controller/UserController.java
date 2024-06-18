@@ -1,5 +1,7 @@
 package com.plataform.courses.controller;
 import java.net.URI;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +29,13 @@ public class UserController {
     
     @Autowired
     private UserService userService;
+
+    @GetMapping("")
+    public ResponseEntity<List<User>> findAll(){
+        List<User> users = this.userService.getAll();
+        return ResponseEntity.ok().body(users);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){
         User obj = this.userService.findById(id);

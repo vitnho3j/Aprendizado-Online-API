@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Course.CreateCourse;
 import com.plataform.courses.services.CourseService;
+import com.plataform.courses.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -28,6 +29,15 @@ import jakarta.validation.Valid;
 public class CourseController {
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("")
+    public ResponseEntity<List<Course>> findAll(){
+        List<Course> courses = this.courseService.findAll();
+        return ResponseEntity.ok().body(courses);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> findById(@PathVariable Long id){
@@ -59,6 +69,7 @@ public class CourseController {
 
     @GetMapping("/user/{authorId}")
     public ResponseEntity<List<Course>> findAllByAuthorId(@PathVariable Long authorId){
+        this.userService.findById(authorId);
         List<Course> courses = this.courseService.findAllByAuthorId(authorId);
         return ResponseEntity.ok().body(courses);
     }

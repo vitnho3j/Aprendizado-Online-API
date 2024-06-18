@@ -48,4 +48,9 @@ public class CourseService {
         List<Course> courses = this.courseRepository.findByAuthor_Id(authorId);
         return courses;
     }
+
+    public List<Course>findAll(){
+        List<Course> courses = this.courseRepository.findAll();
+        return courses;
+    }
 }
