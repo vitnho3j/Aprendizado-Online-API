@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.plataform.courses.model.entity.Purchase;
 import com.plataform.courses.repository.PurchaseRepository;
+import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+
 import java.util.Optional;
 
 @Service
@@ -16,7 +18,7 @@ public class PurchaseService {
 
     public Purchase findById(Long id){
         Optional<Purchase> purchase = this.purchaseRepository.findById(id);
-        return purchase.orElseThrow(()-> new RuntimeException(
+        return purchase.orElseThrow(()-> new ObjectNotFoundException(
             "Compra não encontrada! Id: " + id + ", Tipo: " + Purchase.class.getName()
         ));
     }

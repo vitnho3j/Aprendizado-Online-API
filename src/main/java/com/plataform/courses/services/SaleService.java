@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.plataform.courses.model.entity.Sale;
 import com.plataform.courses.repository.SaleRepository;
+import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 
 import jakarta.transaction.Transactional;
 
@@ -18,7 +19,7 @@ public class SaleService {
 
     public Sale findById(Long id){
         Optional<Sale> sale = this.saleRepository.findById(id);
-        return sale.orElseThrow(()-> new RuntimeException(
+        return sale.orElseThrow(()-> new ObjectNotFoundException(
             "Venda não encontrada! Id: " + id + ", Tipo: " + Sale.class.getName()
         ));
     }

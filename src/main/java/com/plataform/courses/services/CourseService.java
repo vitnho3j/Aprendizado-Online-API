@@ -1,5 +1,6 @@
 package com.plataform.courses.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,21 +10,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.repository.CourseRepository;
+import com.plataform.courses.services.exceptions.BadWordException;
+import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    private static String UNTANTED_CONTENT = "Conteudo indesejado detectado";
+
     public Course findById(Long id){
         Optional<Course> course = this.courseRepository.findById(id);
-        return course.orElseThrow(()-> new RuntimeException(
+        return course.orElseThrow(()-> new ObjectNotFoundException(
             "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName() 
         ));
     }
 
     @Transactional
     public Course create(Course obj){
+        ContentFilterService filterService = new ContentFilterService();
+        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
+        if (filterService.containsBadWord(fieldsToCheck)) {
+            throw new BadWordException(UNTANTED_CONTENT);
+        }
         obj.setId(null);
         obj = this.courseRepository.save(obj);
         return obj;
@@ -31,6 +41,11 @@ public class CourseService {
 
     @Transactional
     public Course update(Course obj){
+        ContentFilterService filterService = new ContentFilterService();
+        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
+        if (filterService.containsBadWord(fieldsToCheck)) {
+            throw new BadWordException(UNTANTED_CONTENT);
+        }
         Course newObj = findById(obj.getId());
         newObj.setAvailable(obj.getAvailable());
         newObj.setDescription(obj.getDescription());
