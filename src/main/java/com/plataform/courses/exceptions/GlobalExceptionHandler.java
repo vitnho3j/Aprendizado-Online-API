@@ -23,9 +23,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.plataform.courses.services.exceptions.BadWordException;
+import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
 // import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 
 // import jakarta.servlet.ServletException;
 // import jakarta.servlet.http.HttpServletRequest;
@@ -76,13 +78,38 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadWordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleAllBadRequest(
+    public ResponseEntity<Object> handleBadWordException(
             BadWordException badWordException,
             WebRequest request) {
         log.error("A bad word was founded it!", badWordException);
         return buildErrorResponse(
             badWordException,
             HttpStatus.BAD_REQUEST,
+            request);   
+    }
+
+    
+    @ExceptionHandler(SellerNotEqualsToAuthorException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleSellerNotEqualsToAuthorException(
+            SellerNotEqualsToAuthorException sellerNotEqualsToAuthorException,
+            WebRequest request) {
+        log.error("A bad word was founded it!", sellerNotEqualsToAuthorException);
+        return buildErrorResponse(
+            sellerNotEqualsToAuthorException,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(BuyerEqualsToAuthorException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleBuyerEqualsToAuthorException(
+            BuyerEqualsToAuthorException buyerEqualsToAuthorException,
+            WebRequest request) {
+        log.error("A bad word was founded it!", buyerEqualsToAuthorException);
+        return buildErrorResponse(
+            buyerEqualsToAuthorException,
+            HttpStatus.FORBIDDEN,
             request);   
     }
 

@@ -4,10 +4,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class BadWordException extends DataIntegrityViolationException {
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
+public class SellerNotEqualsToAuthorException extends DataIntegrityViolationException {
 
-    public BadWordException(String message) {
+    public SellerNotEqualsToAuthorException(String message) {
         super(message);
     }
 

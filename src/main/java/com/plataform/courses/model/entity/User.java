@@ -3,8 +3,6 @@ package com.plataform.courses.model.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -29,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = User.TABLE_NAME)
 public class User {
-    public static final String TABLE_NAME = "user";
+    public static final String TABLE_NAME = "users";
     public interface CreateUser {}
     public interface UpdateUser {}
 
@@ -43,16 +41,13 @@ public class User {
     @NotBlank(groups = {CreateUser.class, UpdateUser.class})
     private String name;
 
-    @Column(name = "cpf", length = 11, nullable = false)
-    @CPF
-    @Size(min = 11, max = 11)
-    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String cpf;
-
-    @Column(name = "email", length = 256, nullable = false)
+    @Column(name = "email", length = 256, nullable = false, unique = true)
     @Email
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "immutable", nullable = false)
+    private Boolean immutable = false;
 
     @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

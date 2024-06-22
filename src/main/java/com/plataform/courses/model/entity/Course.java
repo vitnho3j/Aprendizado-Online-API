@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = Course.TABLE_NAME)
 public class Course {
-    public static final String TABLE_NAME = "course";
+    public static final String TABLE_NAME = "courses";
     public interface CreateCourse {}
     public interface UpdateCourse {}
 
@@ -43,7 +44,7 @@ public class Course {
     @Size(min = 2, max = 100, groups = {CreateCourse.class, UpdateCourse.class})
     private String category;
 
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, nullable = false, unique = true)
     @NotBlank(groups = {CreateCourse.class, UpdateCourse.class})
     @Size(min = 2, max = 100, groups = {CreateCourse.class, UpdateCourse.class})
     private String name;
@@ -64,8 +65,11 @@ public class Course {
     private User author;  
 
     @Column(name = "available", nullable = false)
-    @NotNull
     private Boolean available = true;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "immutable", nullable = false)
+    private Boolean immutable = false;
 
     @JsonIgnore
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})

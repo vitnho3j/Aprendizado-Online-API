@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = Sale.TABLE_NAME)
 public class Sale {
-    public static final String TABLE_NAME = "sale";
+    public static final String TABLE_NAME = "sales";
+    public interface CreateSale {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,15 +41,20 @@ public class Sale {
     private LocalDateTime timestamp;
 
     @Positive
-    @NotNull
     @Column(name = "value", nullable = false, updatable = false)
     private Float value;
 
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
+    @NotNull(groups = CreateSale.class)
     private User seller;
     
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
+    @NotNull(groups = CreateSale.class)
     private Course course;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "immutable", nullable = false)
+    private Boolean immutable = false;
 }

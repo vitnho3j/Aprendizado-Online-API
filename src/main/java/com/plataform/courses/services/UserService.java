@@ -37,6 +37,7 @@ public class UserService {
             );
         }
         obj.setId(null);
+        obj.setImmutable(false);
         obj = this.userRepository.save(obj);
         return obj;
     }
@@ -51,6 +52,7 @@ public class UserService {
         User newObj = findById(obj.getId());
         newObj.setName(obj.getName());
         newObj.setEmail(obj.getEmail());
+        newObj.setImmutable(false);
         return this.userRepository.save(newObj);
     }
 

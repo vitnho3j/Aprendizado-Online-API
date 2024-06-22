@@ -17,4 +17,15 @@ public class MainController {
     public String courses(){
         return "courses";
     }
+
+    @RequestMapping("/sales")
+    public String sales(){
+        return "sales";
+    }
+
+    @RequestMapping("/purchases")
+    public String purchases(){
+        return "purchases";
+    }
+
 }

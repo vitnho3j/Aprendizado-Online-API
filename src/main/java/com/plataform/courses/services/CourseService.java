@@ -35,6 +35,7 @@ public class CourseService {
             throw new BadWordException(UNTANTED_CONTENT);
         }
         obj.setId(null);
+        obj.setImmutable(false);
         obj = this.courseRepository.save(obj);
         return obj;
     }
@@ -51,6 +52,7 @@ public class CourseService {
         newObj.setDescription(obj.getDescription());
         newObj.setName(obj.getName());
         newObj.setPrice(obj.getPrice());
+        newObj.setImmutable(false);
         return this.courseRepository.save(newObj);
     }
 

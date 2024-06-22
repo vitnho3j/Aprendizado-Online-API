@@ -24,7 +24,7 @@ import com.plataform.courses.services.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/api/courses")
 @Validated
 public class CourseController {
     @Autowired
