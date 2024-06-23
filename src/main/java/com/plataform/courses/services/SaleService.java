@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class SaleService {
+
+    private static final Integer MAX_IMMUTABLE_RECORDS = 5;
     
     @Autowired
     private SaleRepository saleRepository;
@@ -42,6 +44,12 @@ public class SaleService {
                 .orElseThrow(() -> new ObjectNotFoundException("Curso não encontrado"));
         if (!course.getAuthor().getId().equals(obj.getSeller().getId())) {
             throw new SellerNotEqualsToAuthorException("O vendedor não é o autor do curso.");
+        }
+        Long immutableCount = saleRepository.countByImmutableTrue();
+        if (immutableCount >= MAX_IMMUTABLE_RECORDS){
+            obj.setImmutable(false);
+        } else {
+            obj.setImmutable(true);
         }
         obj.setValue(course.getPrice());
         obj.setId(null);

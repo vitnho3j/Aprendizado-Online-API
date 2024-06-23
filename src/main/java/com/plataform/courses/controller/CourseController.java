@@ -62,9 +62,8 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        this.courseService.delete(id);
-        return ResponseEntity.noContent().build();
+    public void delete(@PathVariable Long id){
+        this.courseService.soft_delete(id);
     }
 
     @GetMapping("/user/{authorId}")

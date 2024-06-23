@@ -43,6 +43,7 @@ public class User {
 
     @Column(name = "email", length = 256, nullable = false, unique = true)
     @Email
+    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

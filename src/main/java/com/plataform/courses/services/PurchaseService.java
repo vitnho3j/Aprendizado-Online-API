@@ -15,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class PurchaseService {
+
+    private static final Integer MAX_IMMUTABLE_RECORDS = 5;
     
     @Autowired
     private PurchaseRepository purchaseRepository;
@@ -37,6 +39,12 @@ public class PurchaseService {
         ));
         if (course.getAuthor().getId().equals(obj.getBuyer().getId())) {
             throw new SellerNotEqualsToAuthorException("O autor do curso não pode comprar o próprio curso.");
+        }
+        Long immutableCount = purchaseRepository.countByImmutableTrue();
+        if (immutableCount >= MAX_IMMUTABLE_RECORDS){
+            obj.setImmutable(false);
+        } else {
+            obj.setImmutable(true);
         }
         obj.setValue(course.getPrice());
         obj.setId(null);

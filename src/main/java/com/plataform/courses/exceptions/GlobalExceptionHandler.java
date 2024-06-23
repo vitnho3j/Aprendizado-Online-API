@@ -26,6 +26,7 @@ import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
 // import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
+import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 
@@ -94,9 +95,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleSellerNotEqualsToAuthorException(
             SellerNotEqualsToAuthorException sellerNotEqualsToAuthorException,
             WebRequest request) {
-        log.error("A bad word was founded it!", sellerNotEqualsToAuthorException);
+        log.error("The seller is not the author of the course!", sellerNotEqualsToAuthorException);
         return buildErrorResponse(
             sellerNotEqualsToAuthorException,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(NotPermissionImmutableData.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleNotPermissionImmutableData(
+            NotPermissionImmutableData notPermissionImmutableData,
+            WebRequest request) {
+        log.error("You don't have permission to manage this data!", notPermissionImmutableData);
+        return buildErrorResponse(
+            notPermissionImmutableData,
             HttpStatus.FORBIDDEN,
             request);   
     }
@@ -106,7 +119,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleBuyerEqualsToAuthorException(
             BuyerEqualsToAuthorException buyerEqualsToAuthorException,
             WebRequest request) {
-        log.error("A bad word was founded it!", buyerEqualsToAuthorException);
+        log.error("A seller cannot buy their own course!", buyerEqualsToAuthorException);
         return buildErrorResponse(
             buyerEqualsToAuthorException,
             HttpStatus.FORBIDDEN,
