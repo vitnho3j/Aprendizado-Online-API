@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.entity.Course;
-import com.plataform.courses.model.entity.Course.CreateCourse;
+import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.services.CourseService;
 import com.plataform.courses.services.UserService;
 
@@ -46,7 +46,6 @@ public class CourseController {
     }
 
     @PostMapping
-    @Validated(CreateCourse.class)
     public ResponseEntity<Void> create(@Valid @RequestBody Course obj){
         this.courseService.create(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -67,9 +66,9 @@ public class CourseController {
     }
 
     @GetMapping("/user/{authorId}")
-    public ResponseEntity<List<Course>> findAllByAuthorId(@PathVariable Long authorId){
+    public ResponseEntity<List<CourseProjection>> findAllByAuthorId(@PathVariable Long authorId){
         this.userService.findById(authorId);
-        List<Course> courses = this.courseService.findAllByAuthorId(authorId);
+        List<CourseProjection> courses = this.courseService.findAllByAuthorId(authorId);
         return ResponseEntity.ok().body(courses);
     }
 }

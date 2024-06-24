@@ -29,7 +29,6 @@ import lombok.NoArgsConstructor;
 @Table(name = Purchase.TABLE_NAME)
 public class Purchase {
     public static final String TABLE_NAME = "purchases";
-    public interface CreatePurchase {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,12 +46,12 @@ public class Purchase {
 
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
-    @NotNull(groups = CreatePurchase.class)
+    @NotNull()
     private User buyer;
 
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
-    @NotNull(groups = CreatePurchase.class)
+    @NotNull()
     private Course course;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

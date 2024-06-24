@@ -29,7 +29,6 @@ import lombok.NoArgsConstructor;
 @Table(name = Sale.TABLE_NAME)
 public class Sale {
     public static final String TABLE_NAME = "sales";
-    public interface CreateSale {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,12 +45,12 @@ public class Sale {
 
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
-    @NotNull(groups = CreateSale.class)
+    @NotNull()
     private User seller;
     
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
-    @NotNull(groups = CreateSale.class)
+    @NotNull()
     private Course course;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

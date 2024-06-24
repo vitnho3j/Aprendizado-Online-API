@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.plataform.courses.model.entity.Course;
+import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
@@ -80,8 +81,8 @@ public class CourseService {
         this.courseRepository.save(obj);
     }
 
-    public List<Course>findAllByAuthorId(Long authorId){
-        List<Course> courses = this.courseRepository.findByAuthor_Id(authorId);
+    public List<CourseProjection>findAllByAuthorId(Long authorId){
+        List<CourseProjection> courses = this.courseRepository.findByAuthor_Id(authorId);
         return courses;
     }
 

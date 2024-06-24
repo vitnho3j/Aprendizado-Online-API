@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Purchase;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.PurchaseRepository;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
+
+import jakarta.validation.Valid;
 
 import java.util.Optional;
 
@@ -51,5 +54,13 @@ public class PurchaseService {
         obj = this.purchaseRepository.save(obj);
         return obj;
     }
+
+    public Purchase fromDTO(@Valid PurchaseCreateDTO obj){
+        Purchase purchase = new Purchase();
+        purchase.setBuyer(obj.getBuyer());
+        purchase.setCourse(obj.getCourse());
+        return purchase;
+    }
+
 
 }

@@ -28,8 +28,6 @@ import lombok.NoArgsConstructor;
 @Table(name = User.TABLE_NAME)
 public class User {
     public static final String TABLE_NAME = "users";
-    public interface CreateUser {}
-    public interface UpdateUser {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,13 +35,13 @@ public class User {
     private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
-    @Size(min = 2, max = 100, groups = {CreateUser.class, UpdateUser.class})
-    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
+    @Size(min = 2, max = 100)
+    @NotBlank()
     private String name;
 
     @Column(name = "email", length = 256, nullable = false, unique = true)
     @Email
-    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
+    @NotBlank()
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

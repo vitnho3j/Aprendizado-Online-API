@@ -31,8 +31,6 @@ import lombok.NoArgsConstructor;
 @Table(name = Course.TABLE_NAME)
 public class Course {
     public static final String TABLE_NAME = "courses";
-    public interface CreateCourse {}
-    public interface UpdateCourse {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,26 +38,26 @@ public class Course {
     private Long id;
 
     @Column(name = "category", length = 100, nullable = false)
-    @NotBlank(groups = {CreateCourse.class, UpdateCourse.class})
-    @Size(min = 2, max = 100, groups = {CreateCourse.class, UpdateCourse.class})
+    @NotBlank()
+    @Size(min = 2, max = 100)
     private String category;
 
     @Column(name = "name", length = 100, nullable = false, unique = true)
-    @NotBlank(groups = {CreateCourse.class, UpdateCourse.class})
-    @Size(min = 2, max = 100, groups = {CreateCourse.class, UpdateCourse.class})
+    @NotBlank()
+    @Size(min = 2, max = 100)
     private String name;
 
     @Positive
     @Column(name = "price", nullable = false)
-    @NotNull(groups = {CreateCourse.class, UpdateCourse.class})
+    @NotNull()
     private Float price;
 
     @Column(name = "description", length = 255, nullable = false)
-    @NotBlank(groups = {CreateCourse.class, UpdateCourse.class})
-    @Size(min = 10, max = 255, groups = {CreateCourse.class, UpdateCourse.class})
+    @NotBlank()
+    @Size(min = 10, max = 255)
     private String description;
 
-    @NotNull(groups = CreateCourse.class)
+    @NotNull()
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     private User author;  

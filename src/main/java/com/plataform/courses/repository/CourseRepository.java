@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.plataform.courses.model.entity.Course;
+import com.plataform.courses.model.projections.CourseProjection;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long>{
 
-    List<Course> findByAuthor_Id(Long id);
+    List<CourseProjection> findByAuthor_Id(Long id);
 
     Long countByImmutableTrue();
 

@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.plataform.courses.model.dto.UserCreateDTO;
+import com.plataform.courses.model.dto.UserUpdateDTO;
 import com.plataform.courses.model.entity.User;
 import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class UserService {
@@ -87,6 +91,21 @@ public class UserService {
     public List<User> getAll() {
         List<User> courses = this.userRepository.findAll();
         return courses;
+    }
+
+    public User fromDTO(@Valid UserCreateDTO obj){
+        User user = new User();
+        user.setName(obj.getName());
+        user.setEmail(obj.getEmail());
+        return user;
+    }
+
+    public User fromDTO(@Valid UserUpdateDTO obj){
+        User user = new User();
+        user.setId(obj.getId());
+        user.setName(obj.getName());
+        user.setEmail(obj.getEmail());
+        return user;
     }
 
 }

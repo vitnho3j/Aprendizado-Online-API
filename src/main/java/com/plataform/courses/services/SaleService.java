@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Sale;
 import com.plataform.courses.repository.CourseRepository;
@@ -14,6 +15,7 @@ import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 @Service
 public class SaleService {
@@ -56,6 +58,13 @@ public class SaleService {
         obj.setImmutable(false);
         obj = this.saleRepository.save(obj);
         return obj;
+    }
+
+    public Sale fromDTO(@Valid SaleCreateDTO obj){
+        Sale sale = new Sale();
+        sale.setSeller(obj.getSeller());
+        sale.setCourse(obj.getCourse());
+        return sale;
     }
 
 }

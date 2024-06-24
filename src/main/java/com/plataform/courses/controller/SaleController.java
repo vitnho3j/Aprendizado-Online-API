@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.entity.Sale;
-import com.plataform.courses.model.entity.Sale.CreateSale;
 import com.plataform.courses.services.SaleService;
 
 import jakarta.validation.Valid;
@@ -29,7 +28,6 @@ public class SaleController {
     private SaleService saleService;
 
     @PostMapping
-    @Validated(CreateSale.class)
     public ResponseEntity<Void> create (@Valid @RequestBody Sale obj){
         this.saleService.create(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
