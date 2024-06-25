@@ -1,5 +1,6 @@
 package com.plataform.courses.model.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -34,7 +37,7 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column(name = "category", length = 100, nullable = false)
@@ -62,8 +65,12 @@ public class Course {
     @ManyToOne
     private User author;  
 
-    @Column(name = "available", nullable = false)
-    private Boolean available = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "deleted_at")
+    private LocalDateTime deleted_at = null;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "immutable", nullable = false)

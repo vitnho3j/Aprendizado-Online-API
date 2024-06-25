@@ -1,5 +1,6 @@
 package com.plataform.courses.services;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,6 @@ public class UserService {
             obj.setImmutable(true);
         }
         obj.setId(null);
-        obj.setImmutable(false);
         obj = this.userRepository.save(obj);
         return obj;
     }
@@ -76,16 +76,14 @@ public class UserService {
         return this.userRepository.save(newObj);
     }
 
-    public void delete(Long id){
+    public void soft_delete(Long id){
         User obj = findById(id);
         if (obj.getImmutable().equals(true)){
             throw new NotPermissionImmutableData(NOT_PERMISSION_DELETE);
         }
-        try{
-            this.userRepository.deleteById(id);
-        } catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+        obj.setActive(false);
+        obj.setDeleted_at(LocalDateTime.now());
+        this.userRepository.save(obj);
     }
 
     public List<User> getAll() {

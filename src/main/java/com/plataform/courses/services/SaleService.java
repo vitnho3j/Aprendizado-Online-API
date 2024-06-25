@@ -11,6 +11,7 @@ import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Sale;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.SaleRepository;
+import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 
@@ -21,6 +22,8 @@ import jakarta.validation.Valid;
 public class SaleService {
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 5;
+
+    private static String DUPLICATE_SELLER = "Este curso já foi vendido para este usuário";
     
     @Autowired
     private SaleRepository saleRepository;
@@ -47,6 +50,10 @@ public class SaleService {
         if (!course.getAuthor().getId().equals(obj.getSeller().getId())) {
             throw new SellerNotEqualsToAuthorException("O vendedor não é o autor do curso.");
         }
+        Optional<Sale> existingSale = saleRepository.findBySellerIdAndCourseId(obj.getSeller().getId(), obj.getCourse().getId());
+        if (existingSale.isPresent()){
+            throw new DuplicateSaleException(DUPLICATE_SELLER);
+        }
         Long immutableCount = saleRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
             obj.setImmutable(false);
@@ -55,7 +62,6 @@ public class SaleService {
         }
         obj.setValue(course.getPrice());
         obj.setId(null);
-        obj.setImmutable(false);
         obj = this.saleRepository.save(obj);
         return obj;
     }

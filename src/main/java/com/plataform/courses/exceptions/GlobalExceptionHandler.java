@@ -26,6 +26,8 @@ import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
 // import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
+import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
+import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
@@ -86,6 +88,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(
             badWordException,
             HttpStatus.BAD_REQUEST,
+            request);   
+    }
+
+    @ExceptionHandler(DuplicatePurchaseException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleDuplicatePurchaseException(
+            DuplicatePurchaseException duplicateException,
+            WebRequest request) {
+        log.error("this user already buyed this course!", duplicateException);
+        return buildErrorResponse(
+            duplicateException,
+            HttpStatus.CONFLICT,
+            request);   
+    }
+
+    @ExceptionHandler(DuplicateSaleException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleDuplicateSaleException(
+            DuplicateSaleException duplicateException,
+            WebRequest request) {
+        log.error("this course has already been sold to this user!", duplicateException);
+        return buildErrorResponse(
+            duplicateException,
+            HttpStatus.CONFLICT,
             request);   
     }
 

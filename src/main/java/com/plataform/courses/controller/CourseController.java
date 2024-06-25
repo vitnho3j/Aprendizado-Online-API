@@ -61,8 +61,9 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id){
         this.courseService.soft_delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/user/{authorId}")
@@ -70,5 +71,11 @@ public class CourseController {
         this.userService.findById(authorId);
         List<CourseProjection> courses = this.courseService.findAllByAuthorId(authorId);
         return ResponseEntity.ok().body(courses);
+    }
+
+    @PutMapping("/recover/{id}")
+    public ResponseEntity<Void> recoverCourse(@PathVariable Long id){
+        this.courseService.recoverCourse(id);
+        return ResponseEntity.noContent().build();
     }
 }

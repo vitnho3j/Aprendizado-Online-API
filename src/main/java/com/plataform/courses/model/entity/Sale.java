@@ -36,7 +36,7 @@ public class Sale {
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    @Column(name = "timestamp", updatable = false)
+    @Column(name = "timestamp", updatable = false, nullable = false)
     private LocalDateTime timestamp;
 
     @Positive

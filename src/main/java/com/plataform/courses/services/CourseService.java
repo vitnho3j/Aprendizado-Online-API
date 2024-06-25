@@ -1,5 +1,6 @@
 package com.plataform.courses.services;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +23,9 @@ public class CourseService {
 
     private static String UNTANTED_CONTENT = "Conteudo indesejado detectado";
 
-    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este usuário";
+    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este curso";
 
-    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este usuário";
+    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso";
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
@@ -64,7 +65,7 @@ public class CourseService {
         if (newObj.getImmutable().equals(true)){
             throw new NotPermissionImmutableData(NOT_PERMISSION_UPDATE);
         }
-        newObj.setAvailable(obj.getAvailable());
+        newObj.setActive(obj.getActive());
         newObj.setDescription(obj.getDescription());
         newObj.setName(obj.getName());
         newObj.setPrice(obj.getPrice());
@@ -77,7 +78,8 @@ public class CourseService {
         if (obj.getImmutable().equals(true)){
             throw new NotPermissionImmutableData(NOT_PERMISSION_DELETE);
         }
-        obj.setAvailable(false);
+        obj.setActive(false);
+        obj.setDeleted_at(LocalDateTime.now());
         this.courseRepository.save(obj);
     }
 
@@ -89,5 +91,12 @@ public class CourseService {
     public List<Course>findAll(){
         List<Course> courses = this.courseRepository.findAll();
         return courses;
+    }
+
+    public void recoverCourse(Long id){
+        Course course = findById(id);
+        course.setActive(true);
+        course.setDeleted_at(null);
+        this.courseRepository.save(course);
     }
 }
