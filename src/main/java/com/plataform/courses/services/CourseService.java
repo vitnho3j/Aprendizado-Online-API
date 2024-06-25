@@ -9,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.plataform.courses.model.dto.CourseCreateDTO;
+import com.plataform.courses.model.dto.CourseUpdateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class CourseService {
@@ -98,5 +102,25 @@ public class CourseService {
         course.setActive(true);
         course.setDeleted_at(null);
         this.courseRepository.save(course);
+    }
+
+    public Course fromDTO(@Valid CourseCreateDTO obj){
+        Course course = new Course();
+        course.setName(obj.getName());
+        course.setCategory(obj.getCategory());
+        course.setDescription(obj.getDescription());
+        course.setAuthor(obj.getAuthor());
+        course.setPrice(obj.getPrice());
+        return course;
+    }
+
+    public Course fromDTO(@Valid CourseUpdateDTO obj){
+        Course course = new Course();
+        course.setId(obj.getId());
+        course.setName(obj.getName());
+        course.setCategory(obj.getCategory());
+        course.setDescription(obj.getDescription());
+        course.setPrice(obj.getPrice());
+        return course;
     }
 }

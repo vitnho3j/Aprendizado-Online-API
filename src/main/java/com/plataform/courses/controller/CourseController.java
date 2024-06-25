@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.plataform.courses.model.dto.CourseCreateDTO;
+import com.plataform.courses.model.dto.CourseUpdateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.services.CourseService;
@@ -46,17 +48,19 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody Course obj){
-        this.courseService.create(obj);
+    public ResponseEntity<Void> create(@Valid @RequestBody CourseCreateDTO obj){
+        Course course = this.courseService.fromDTO(obj);
+        Course newCourse = this.courseService.create(course);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-        .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        .path("/{id}").buildAndExpand(newCourse.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody Course obj, @PathVariable Long id){
+    public ResponseEntity<Void> update(@Valid @RequestBody CourseUpdateDTO obj, @PathVariable Long id){
         obj.setId(id);
-        this.courseService.update(obj);
+        Course course = this.courseService.fromDTO(obj);
+        this.courseService.update(course);
         return ResponseEntity.noContent().build();
     }
 

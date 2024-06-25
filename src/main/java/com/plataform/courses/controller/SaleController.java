@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Sale;
 import com.plataform.courses.services.SaleService;
 
@@ -28,10 +29,11 @@ public class SaleController {
     private SaleService saleService;
 
     @PostMapping
-    public ResponseEntity<Void> create (@Valid @RequestBody Sale obj){
-        this.saleService.create(obj);
+    public ResponseEntity<Void> create (@Valid @RequestBody SaleCreateDTO obj){
+        Sale sale = this.saleService.fromDTO(obj);
+        Sale newSale = this.saleService.create(sale);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-        .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        .path("/{id}").buildAndExpand(newSale.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 

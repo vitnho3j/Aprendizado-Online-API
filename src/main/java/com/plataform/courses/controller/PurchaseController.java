@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Purchase;
 import com.plataform.courses.services.PurchaseService;
 
@@ -28,10 +29,11 @@ public class PurchaseController {
     private PurchaseService purchaseService;
 
     @PostMapping
-    public ResponseEntity<Void> create (@Valid @RequestBody Purchase obj){
-        this.purchaseService.create(obj);
+    public ResponseEntity<Void> create (@Valid @RequestBody PurchaseCreateDTO obj){
+        Purchase purchase = this.purchaseService.fromDTO(obj);
+        Purchase newPurchase = this.purchaseService.create(purchase);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-        .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        .path("/{id}").buildAndExpand(newPurchase.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
