@@ -75,5 +75,15 @@ public class PurchaseService {
         return purchase;
     }
 
+    public List<Purchase>findAllByBuyerId(Long buyerId){
+        List<Purchase> purchases = this.purchaseRepository.findByBuyer_Id(buyerId);
+        return purchases;
+    }
+
+    public List<Purchase>findAllByCourseId(Long courseId){
+        List<Purchase> purchases = this.purchaseRepository.findByCourse_Id(courseId);
+        return purchases;
+    }
+
 
 }

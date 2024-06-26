@@ -11,4 +11,6 @@ public interface CourseProjection {
     public String getName();
 
     public Float getPrice();
+
+    public Boolean getActive();
 }

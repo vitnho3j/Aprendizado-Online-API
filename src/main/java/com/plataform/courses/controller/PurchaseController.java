@@ -16,7 +16,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Purchase;
+import com.plataform.courses.services.CourseService;
 import com.plataform.courses.services.PurchaseService;
+import com.plataform.courses.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -27,6 +29,12 @@ public class PurchaseController {
 
     @Autowired
     private PurchaseService purchaseService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CourseService courseService;
 
     @PostMapping
     public ResponseEntity<Void> create (@Valid @RequestBody PurchaseCreateDTO obj){
@@ -47,6 +55,20 @@ public class PurchaseController {
     public ResponseEntity<Purchase> findById(@PathVariable Long id){
         Purchase purchase = this.purchaseService.findById(id);
         return ResponseEntity.ok().body(purchase);
+    }
+
+    @GetMapping("/user/{buyerId}")
+    public ResponseEntity<List<Purchase>> findAllByBuyerId(@PathVariable Long buyerId){
+        this.userService.findById(buyerId);
+        List<Purchase> purchases = this.purchaseService.findAllByBuyerId(buyerId);
+        return ResponseEntity.ok().body(purchases);
+    }
+
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<Purchase>> findAllByCourseId(@PathVariable Long courseId){
+        this.courseService.findById(courseId);
+        List<Purchase> purchases = this.purchaseService.findAllByCourseId(courseId);
+        return ResponseEntity.ok().body(purchases);
     }
     
 }
