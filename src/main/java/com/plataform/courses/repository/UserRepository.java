@@ -14,7 +14,12 @@ import com.plataform.courses.model.entity.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
     Long countByImmutableTrue();
+
     List<Course> findByCourses_Id(Long id);
+
+    List<User> findByActiveTrue();
+
+    List<User> findByActiveFalse();
 
     @Modifying
     @Query("DELETE FROM User s WHERE s.immutable = false")

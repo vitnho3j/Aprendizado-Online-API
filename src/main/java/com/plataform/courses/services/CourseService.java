@@ -104,6 +104,16 @@ public class CourseService {
         this.courseRepository.save(course);
     }
 
+    public List<Course> findByActiveTrue(){
+        List<Course> courses = this.courseRepository.findByActiveTrue();
+        return courses;
+    }
+
+    public List<Course> findByActiveFalse(){
+        List<Course> courses = this.courseRepository.findByActiveFalse();
+        return courses;
+    }
+
     public Course fromDTO(@Valid CourseCreateDTO obj){
         Course course = new Course();
         course.setName(obj.getName());

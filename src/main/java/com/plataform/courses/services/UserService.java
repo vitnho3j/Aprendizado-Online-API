@@ -91,6 +91,16 @@ public class UserService {
         return courses;
     }
 
+    public List<User> findByActiveTrue(){
+        List<User> activeUsers = this.userRepository.findByActiveTrue();
+        return activeUsers; 
+    }
+
+    public List<User> findByActiveFalse(){
+        List<User> inativeUsers = this.userRepository.findByActiveFalse();
+        return inativeUsers; 
+    }
+
     public User fromDTO(@Valid UserCreateDTO obj){
         User user = new User();
         user.setName(obj.getName());

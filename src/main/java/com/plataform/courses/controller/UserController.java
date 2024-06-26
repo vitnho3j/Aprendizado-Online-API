@@ -43,6 +43,18 @@ public class UserController {
         return ResponseEntity.ok().body(obj);
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<User>> findByActiveTrue(){
+        List<User> activeUsers = this.userService.findByActiveTrue();
+        return ResponseEntity.ok().body(activeUsers);
+    }
+
+    @GetMapping("/inative")
+    public ResponseEntity<List<User>> findByActiveFalse(){
+        List<User> inativeUsers = this.userService.findByActiveFalse();
+        return ResponseEntity.ok().body(inativeUsers);
+    }
+
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody UserCreateDTO obj){
         User user = this.userService.fromDTO(obj);

@@ -17,6 +17,10 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 
     Long countByImmutableTrue();
 
+    List<Course> findByActiveTrue();
+
+    List<Course> findByActiveFalse();
+
     @Modifying
     @Query("DELETE FROM Course c WHERE c.immutable = false")
     void deleteByImmutableFalse();

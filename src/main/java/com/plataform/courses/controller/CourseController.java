@@ -82,4 +82,16 @@ public class CourseController {
         this.courseService.recoverCourse(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<Course>> findByActiveTrue(){
+        List<Course> courses = this.courseService.findByActiveTrue();
+        return ResponseEntity.ok().body(courses);
+    }
+
+    @GetMapping("/inative")
+    public ResponseEntity<List<Course>> findByActiveFalse(){
+        List<Course> courses = this.courseService.findByActiveFalse();
+        return ResponseEntity.ok().body(courses);
+    }
 }
