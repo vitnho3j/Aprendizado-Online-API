@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -38,6 +40,7 @@ public class Purchase {
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @Column(name = "timestamp", updatable = false, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime timestamp;
 
     @Positive
@@ -47,11 +50,13 @@ public class Purchase {
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
     @NotNull()
+    @JsonIncludeProperties({"id"})
     private User buyer;
 
     @JoinColumn(name = "course_id", nullable = false, updatable = false)
     @ManyToOne
     @NotNull()
+    @JsonIncludeProperties("id")
     private Course course;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

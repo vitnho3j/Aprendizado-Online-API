@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
@@ -63,6 +65,7 @@ public class Course {
     @NotNull()
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @ManyToOne
+    @JsonIgnoreProperties({"name", "email", "active", "deleted_at"})
     private User author;  
 
     @Column(name = "active", nullable = false)
@@ -70,6 +73,7 @@ public class Course {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deleted_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime deleted_at = null;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
