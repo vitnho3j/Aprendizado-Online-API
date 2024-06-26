@@ -11,6 +11,7 @@ import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Sale;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.SaleRepository;
+import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
@@ -30,6 +31,10 @@ public class SaleService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    
+    @Autowired
+    private UserRepository userRepository;
 
     public Sale findById(Long id){
         Optional<Sale> sale = this.saleRepository.findById(id);
@@ -71,6 +76,18 @@ public class SaleService {
         sale.setSeller(obj.getSeller());
         sale.setCourse(obj.getCourse());
         return sale;
+    }
+
+    public List<Sale> findBySeller_Id(Long sellerId){
+        this.userRepository.findById(sellerId);
+        List<Sale> sales = this.saleRepository.findBySeller_Id(sellerId);
+        return sales;
+    }
+
+    public List<Sale> findByCourse_Id(Long courseId){
+        this.courseRepository.findById(courseId);
+        List<Sale> sales = this.saleRepository.findByCourse_Id(courseId);
+        return sales;
     }
 
 }

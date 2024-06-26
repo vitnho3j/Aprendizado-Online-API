@@ -16,7 +16,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Sale;
+import com.plataform.courses.services.CourseService;
 import com.plataform.courses.services.SaleService;
+import com.plataform.courses.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -27,6 +29,12 @@ public class SaleController {
 
     @Autowired
     private SaleService saleService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CourseService courseService;
 
     @PostMapping
     public ResponseEntity<Void> create (@Valid @RequestBody SaleCreateDTO obj){
@@ -47,6 +55,20 @@ public class SaleController {
     public ResponseEntity<Sale> findById(@PathVariable Long id){
         Sale sale = this.saleService.findById(id);
         return ResponseEntity.ok().body(sale);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<Sale>> findAllBySellerId(@PathVariable Long id){
+        this.userService.findById(id);
+        List<Sale> sales = this.saleService.findBySeller_Id(id);
+        return ResponseEntity.ok().body(sales);
+    }
+
+    @GetMapping("/course/{id}")
+    public ResponseEntity<List<Sale>> findAllByCourseId(@PathVariable Long id){
+        this.courseService.findById(id);
+        List<Sale> sales = this.saleService.findBySeller_Id(id);
+        return ResponseEntity.ok().body(sales);
     }
     
 }

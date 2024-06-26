@@ -1,5 +1,6 @@
 package com.plataform.courses.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,11 @@ import com.plataform.courses.model.entity.Sale;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, Long>{
+
+    List<Sale> findBySeller_Id(Long id);
+
+    List<Sale> findByCourse_Id(Long id);
+
     Long countByImmutableTrue();
 
     Optional<Sale> findBySellerIdAndCourseId(Long sellerId, Long courseId);

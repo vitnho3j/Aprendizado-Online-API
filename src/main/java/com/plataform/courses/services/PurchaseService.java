@@ -9,6 +9,7 @@ import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Purchase;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.PurchaseRepository;
+import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
@@ -30,6 +31,9 @@ public class PurchaseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Purchase findById(Long id){
         Optional<Purchase> purchase = this.purchaseRepository.findById(id);
@@ -76,11 +80,13 @@ public class PurchaseService {
     }
 
     public List<Purchase>findAllByBuyerId(Long buyerId){
+        this.userRepository.findById(buyerId);
         List<Purchase> purchases = this.purchaseRepository.findByBuyer_Id(buyerId);
         return purchases;
     }
 
     public List<Purchase>findAllByCourseId(Long courseId){
+        this.courseRepository.findById(courseId);
         List<Purchase> purchases = this.purchaseRepository.findByCourse_Id(courseId);
         return purchases;
     }
