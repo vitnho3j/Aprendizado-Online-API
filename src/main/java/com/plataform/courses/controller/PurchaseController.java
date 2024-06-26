@@ -16,6 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Purchase;
+import com.plataform.courses.model.projections.PurchaseGetByIdCourseProjection;
+import com.plataform.courses.model.projections.PurchaseGetByIdUserProjection;
 import com.plataform.courses.services.CourseService;
 import com.plataform.courses.services.PurchaseService;
 import com.plataform.courses.services.UserService;
@@ -58,16 +60,16 @@ public class PurchaseController {
     }
 
     @GetMapping("/user/{buyerId}")
-    public ResponseEntity<List<Purchase>> findAllByBuyerId(@PathVariable Long buyerId){
+    public ResponseEntity<List<PurchaseGetByIdUserProjection>> findAllByBuyerId(@PathVariable Long buyerId){
         this.userService.findById(buyerId);
-        List<Purchase> purchases = this.purchaseService.findAllByBuyerId(buyerId);
+        List<PurchaseGetByIdUserProjection> purchases = this.purchaseService.findAllByBuyerId(buyerId);
         return ResponseEntity.ok().body(purchases);
     }
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<Purchase>> findAllByCourseId(@PathVariable Long courseId){
+    public ResponseEntity<List<PurchaseGetByIdCourseProjection>> findAllByCourseId(@PathVariable Long courseId){
         this.courseService.findById(courseId);
-        List<Purchase> purchases = this.purchaseService.findAllByCourseId(courseId);
+        List<PurchaseGetByIdCourseProjection> purchases = this.purchaseService.findAllByCourseId(courseId);
         return ResponseEntity.ok().body(purchases);
     }
     

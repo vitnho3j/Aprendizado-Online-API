@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Sale;
+import com.plataform.courses.model.projections.SaleGetByIdCourseProjection;
+import com.plataform.courses.model.projections.SaleGetByIdUserProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.SaleRepository;
 import com.plataform.courses.repository.UserRepository;
@@ -78,15 +80,15 @@ public class SaleService {
         return sale;
     }
 
-    public List<Sale> findBySeller_Id(Long sellerId){
+    public List<SaleGetByIdUserProjection> findBySeller_Id(Long sellerId){
         this.userRepository.findById(sellerId);
-        List<Sale> sales = this.saleRepository.findBySeller_Id(sellerId);
+        List<SaleGetByIdUserProjection> sales = this.saleRepository.findBySeller_Id(sellerId);
         return sales;
     }
 
-    public List<Sale> findByCourse_Id(Long courseId){
+    public List<SaleGetByIdCourseProjection> findByCourse_Id(Long courseId){
         this.courseRepository.findById(courseId);
-        List<Sale> sales = this.saleRepository.findByCourse_Id(courseId);
+        List<SaleGetByIdCourseProjection> sales = this.saleRepository.findByCourse_Id(courseId);
         return sales;
     }
 

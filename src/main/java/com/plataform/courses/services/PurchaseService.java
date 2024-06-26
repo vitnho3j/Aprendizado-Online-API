@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Purchase;
+import com.plataform.courses.model.projections.PurchaseGetByIdCourseProjection;
+import com.plataform.courses.model.projections.PurchaseGetByIdUserProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.PurchaseRepository;
 import com.plataform.courses.repository.UserRepository;
@@ -79,15 +81,15 @@ public class PurchaseService {
         return purchase;
     }
 
-    public List<Purchase>findAllByBuyerId(Long buyerId){
+    public List<PurchaseGetByIdUserProjection>findAllByBuyerId(Long buyerId){
         this.userRepository.findById(buyerId);
-        List<Purchase> purchases = this.purchaseRepository.findByBuyer_Id(buyerId);
+        List<PurchaseGetByIdUserProjection> purchases = this.purchaseRepository.findByBuyer_Id(buyerId);
         return purchases;
     }
 
-    public List<Purchase>findAllByCourseId(Long courseId){
+    public List<PurchaseGetByIdCourseProjection>findAllByCourseId(Long courseId){
         this.courseRepository.findById(courseId);
-        List<Purchase> purchases = this.purchaseRepository.findByCourse_Id(courseId);
+        List<PurchaseGetByIdCourseProjection> purchases = this.purchaseRepository.findByCourse_Id(courseId);
         return purchases;
     }
 

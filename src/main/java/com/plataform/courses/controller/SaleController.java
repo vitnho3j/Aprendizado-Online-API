@@ -16,7 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Sale;
-import com.plataform.courses.services.CourseService;
+import com.plataform.courses.model.projections.SaleGetByIdCourseProjection;
+import com.plataform.courses.model.projections.SaleGetByIdUserProjection;
 import com.plataform.courses.services.SaleService;
 import com.plataform.courses.services.UserService;
 
@@ -32,9 +33,6 @@ public class SaleController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CourseService courseService;
 
     @PostMapping
     public ResponseEntity<Void> create (@Valid @RequestBody SaleCreateDTO obj){
@@ -58,16 +56,15 @@ public class SaleController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<Sale>> findAllBySellerId(@PathVariable Long id){
+    public ResponseEntity<List<SaleGetByIdUserProjection>> findAllBySellerId(@PathVariable Long id){
         this.userService.findById(id);
-        List<Sale> sales = this.saleService.findBySeller_Id(id);
+        List<SaleGetByIdUserProjection> sales = this.saleService.findBySeller_Id(id);
         return ResponseEntity.ok().body(sales);
     }
 
     @GetMapping("/course/{id}")
-    public ResponseEntity<List<Sale>> findAllByCourseId(@PathVariable Long id){
-        this.courseService.findById(id);
-        List<Sale> sales = this.saleService.findBySeller_Id(id);
+    public ResponseEntity<List<SaleGetByIdCourseProjection>> findAllByCourseId(@PathVariable Long id) { 
+        List<SaleGetByIdCourseProjection> sales = this.saleService.findByCourse_Id(id);
         return ResponseEntity.ok().body(sales);
     }
     

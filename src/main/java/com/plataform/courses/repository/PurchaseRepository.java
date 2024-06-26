@@ -9,13 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.plataform.courses.model.entity.Purchase;
+import com.plataform.courses.model.projections.PurchaseGetByIdCourseProjection;
+import com.plataform.courses.model.projections.PurchaseGetByIdUserProjection;
 
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
-    List<Purchase> findByBuyer_Id(Long id);
+    List<PurchaseGetByIdUserProjection> findByBuyer_Id(Long id);
 
-    List<Purchase> findByCourse_Id(Long id);
+    List<PurchaseGetByIdCourseProjection> findByCourse_Id(Long id);
 
     Long countByImmutableTrue();
 
