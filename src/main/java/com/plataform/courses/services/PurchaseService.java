@@ -33,7 +33,7 @@ public class PurchaseService {
 
     private static String PURCHASE_INATIVE_USER = "Você não pode criar uma compra para um usuário inativo";
 
-    private static String PURCHASE_INATIVE_COURSE = "Você não pode criar uma compra para um usuário inativo";
+    private static String PURCHASE_INATIVE_COURSE = "Você não pode criar uma compra para um curso inativo";
     
     @Autowired
     private PurchaseRepository purchaseRepository;
