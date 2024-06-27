@@ -44,24 +44,36 @@ public class PurchaseService {
     @Autowired
     private UserRepository userRepository;
 
+    public String generatePurchaseNotFoundMessage(Long id){
+        return "Compra não encontrada! Id: " + id + ", Tipo: " + Purchase.class.getName();
+    }
+
+    public String generateUserNotFoundMessage(Long id){
+        return "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName();
+    }
+
+    public String generateCourseNotFoundMessage(Long id){
+        return "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName();
+    }
+
     public Purchase findById(Long id){
         Optional<Purchase> purchase = this.purchaseRepository.findById(id);
         return purchase.orElseThrow(()-> new ObjectNotFoundException(
-            "Compra não encontrada! Id: " + id + ", Tipo: " + Purchase.class.getName()
+            generatePurchaseNotFoundMessage(id)
         ));
     }
 
     public User findByIdUser(Long id){
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(()-> new ObjectNotFoundException(
-            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()
+            generateUserNotFoundMessage(id)
         ));
     }
 
     public Course findByIdCourse(Long id){
         Optional<Course> course = this.courseRepository.findById(id);
         return course.orElseThrow(()-> new ObjectNotFoundException(
-            "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName()
+            generateCourseNotFoundMessage(id)
         ));
     }
 
@@ -70,39 +82,69 @@ public class PurchaseService {
         return purchases;
     }
 
-    @Transactional
-    public Purchase create(Purchase obj){
-        Course course = findByIdCourse(obj.getCourse().getId());
-        User user = findByIdUser(obj.getBuyer().getId());
+    public Purchase generateSetsCreateDTO(PurchaseCreateDTO obj){
+        Purchase purchase = new Purchase();
+        purchase.setBuyer(obj.getBuyer());
+        purchase.setCourse(obj.getCourse());
+        return purchase;
+    }
+
+    public void checkCourseInactive(Course course){
         if (course.getActive().equals(false)){
             throw new CreatePurchaseWithCourseInactive(PURCHASE_INATIVE_COURSE);
         }
+    }
+
+    public void checkBuyerInactive(User user){
         if (user.getActive().equals(false)){
             throw new CreatePurchaseWithBuyerInactive(PURCHASE_INATIVE_USER);
         }
+    }
+
+    public void checkSellerEqualsToAuthor(Course course, Purchase obj){
         if (course.getAuthor().getId().equals(obj.getBuyer().getId())) {
             throw new SellerNotEqualsToAuthorException("O autor do curso não pode comprar o próprio curso.");
         }
+    }
+
+    public void checkIfPurchaseExist(Purchase obj){
         Optional<Purchase> existingPurchase = purchaseRepository.findByBuyerIdAndCourseId(obj.getBuyer().getId(), obj.getCourse().getId());
         if (existingPurchase.isPresent()){
             throw new DuplicatePurchaseException(DUPLICATE_PURCHASE);
         }
+    }
+
+    public Purchase countImmutableRecords(Purchase obj){
         Long immutableCount = purchaseRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
             obj.setImmutable(false);
         } else {
             obj.setImmutable(true);
         }
-        obj.setValue(course.getPrice());
-        obj.setId(null);
-        obj = this.purchaseRepository.save(obj);
         return obj;
     }
 
+    public Purchase generateSets(Purchase obj, Course course){
+        obj.setValue(course.getPrice());
+        obj.setId(null);
+        return obj;
+    }
+
+    @Transactional
+    public Purchase create(Purchase obj){
+        Course course = findByIdCourse(obj.getCourse().getId());
+        User user = findByIdUser(obj.getBuyer().getId());
+        checkCourseInactive(course);
+        checkBuyerInactive(user);
+        checkSellerEqualsToAuthor(course, obj);
+        checkIfPurchaseExist(obj);
+        obj = countImmutableRecords(obj);
+        obj = generateSets(obj, course);
+        return this.purchaseRepository.save(obj);
+    }
+
     public Purchase fromDTO(@Valid PurchaseCreateDTO obj){
-        Purchase purchase = new Purchase();
-        purchase.setBuyer(obj.getBuyer());
-        purchase.setCourse(obj.getCourse());
+        Purchase purchase = generateSetsCreateDTO(obj);
         return purchase;
     }
 
