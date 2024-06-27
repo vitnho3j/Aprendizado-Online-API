@@ -16,6 +16,7 @@ import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
+import com.plataform.courses.services.exceptions.CourseInactiveUpdateException;
 import com.plataform.courses.services.exceptions.CreateCourseWithAuthorInativeException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
@@ -38,6 +39,9 @@ public class CourseService {
     private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso";
 
     private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";   
+
+    
+    private static String INATIVE_COURSE = "Você não pode atualizar as informações de um curso inativo";  
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
@@ -84,12 +88,19 @@ public class CourseService {
         return course;
     }
 
+    public void checkCourseInative(Course course){
+        if (course.getActive().equals(false)){
+            throw new CourseInactiveUpdateException(INATIVE_COURSE);
+        }
+    }
+
     public Course generateSets(Course obj){
         obj.setActive(obj.getActive());
         obj.setDescription(obj.getDescription());
         obj.setName(obj.getName());
         obj.setPrice(obj.getPrice());
         obj.setImmutable(false);
+        obj.setAuthor(obj.getAuthor());
         return obj;
     }
 
@@ -140,6 +151,11 @@ public class CourseService {
         return course;
     }
 
+    public Course mantainAuthor(Course newObj, Course obj){
+        obj.setAuthor(newObj.getAuthor());
+        return obj;
+    }
+
     @Transactional
     public Course create(Course obj){
         List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
@@ -158,6 +174,8 @@ public class CourseService {
         checkBadWord(fieldsToCheck);
         Course newObj = findById(obj.getId());
         checkIfIsImmutable(newObj, NOT_PERMISSION_UPDATE);
+        checkCourseInative(newObj);
+        obj = mantainAuthor(newObj, obj);
         newObj = generateSets(obj);
         return this.courseRepository.save(newObj);
     }

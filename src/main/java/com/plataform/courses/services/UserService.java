@@ -15,6 +15,7 @@ import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+import com.plataform.courses.services.exceptions.UserInactiveUpdateException;
 
 import jakarta.validation.Valid;
 
@@ -29,6 +30,8 @@ public class UserService {
     private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este usuário";
 
     private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este usuário";
+
+    private static String INATIVE_USER = "Você não pode atualizar as informações de um usuário inativo";
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
@@ -87,6 +90,12 @@ public class UserService {
         return obj;
     }
 
+    public void checkUserInative(User user){
+        if (user.getActive().equals(false)){
+            throw new UserInactiveUpdateException(INATIVE_USER);
+        }
+    }
+
     @Transactional
     public User create(User obj){;
         List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getEmail());
@@ -115,6 +124,7 @@ public class UserService {
         User newObj = findById(obj.getId());
         checkBadWord(fieldsToCheck);
         checkIfIsImmutable(newObj, NOT_PERMISSION_UPDATE);
+        checkUserInative(newObj);
         newObj = generateSetsUpdateUser(obj);
         return this.userRepository.save(newObj);
     }

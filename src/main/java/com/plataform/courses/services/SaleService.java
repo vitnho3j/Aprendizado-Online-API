@@ -17,7 +17,6 @@ import com.plataform.courses.repository.SaleRepository;
 import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.CreateSaleWithCourseInactive;
 import com.plataform.courses.services.exceptions.CreateSaleWithSellerInactive;
-import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 
@@ -28,8 +27,6 @@ import jakarta.validation.Valid;
 public class SaleService {
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 5;
-
-    private static String DUPLICATE_SELLER = "Este curso já foi vendido para este usuário";
 
     private static String SALE_INATIVE_USER = "Você não pode criar uma venda para um usuário inativo";
 
@@ -110,13 +107,6 @@ public class SaleService {
         }
     }
 
-    public void checkIfSaleExist(Sale obj){
-        Optional<Sale> existingSale = saleRepository.findBySellerIdAndCourseId(obj.getSeller().getId(), obj.getCourse().getId());
-        if (existingSale.isPresent()){
-            throw new DuplicateSaleException(DUPLICATE_SELLER);
-        }
-    }
-
     public Sale countImmutableRecords(Sale obj){
         Long immutableCount = saleRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
@@ -140,7 +130,6 @@ public class SaleService {
         checkCourseInactive(course);
         checkSellerInactive(user);
         checkSellerEqualsToAuthor(course, obj);
-        checkIfSaleExist(obj);
         obj = countImmutableRecords(obj);
         obj = generateSets(obj, course);
         return this.saleRepository.save(obj);

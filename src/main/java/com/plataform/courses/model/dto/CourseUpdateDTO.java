@@ -31,7 +31,4 @@ public class CourseUpdateDTO {
     @NotNull()
     private Float price;
 
-    
-
-   
 }

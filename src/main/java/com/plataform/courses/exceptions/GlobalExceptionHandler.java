@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
+import com.plataform.courses.services.exceptions.CourseInactiveUpdateException;
 import com.plataform.courses.services.exceptions.CreateCourseWithAuthorInativeException;
 import com.plataform.courses.services.exceptions.CreatePurchaseWithBuyerInactive;
 import com.plataform.courses.services.exceptions.CreatePurchaseWithCourseInactive;
@@ -32,10 +33,10 @@ import com.plataform.courses.services.exceptions.CreateSaleWithSellerInactive;
 // import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
 import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
-import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
+import com.plataform.courses.services.exceptions.UserInactiveUpdateException;
 
 // import jakarta.servlet.ServletException;
 // import jakarta.servlet.http.HttpServletRequest;
@@ -108,6 +109,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             request);   
     }
 
+    @ExceptionHandler(UserInactiveUpdateException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleUserInactiveUpdateException(
+            UserInactiveUpdateException userInactiveUpdateException,
+            WebRequest request) {
+        log.error("You cannot update an inactive user!", userInactiveUpdateException);
+        return buildErrorResponse(
+            userInactiveUpdateException,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(CourseInactiveUpdateException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCourseInactiveUpdateException(
+            CourseInactiveUpdateException courseInactiveUpdateException,
+            WebRequest request) {
+        log.error("You cannot update an inactive course!", courseInactiveUpdateException);
+        return buildErrorResponse(
+            courseInactiveUpdateException,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
     @ExceptionHandler(CreatePurchaseWithBuyerInactive.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleCreatePurchaseWithBuyerInactive(
@@ -168,19 +193,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             request);   
     }
 
-    @ExceptionHandler(DuplicateSaleException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<Object> handleDuplicateSaleException(
-            DuplicateSaleException duplicateException,
-            WebRequest request) {
-        log.error("this course has already been sold to this user!", duplicateException);
-        return buildErrorResponse(
-            duplicateException,
-            HttpStatus.CONFLICT,
-            request);   
-    }
-
-    
     @ExceptionHandler(SellerNotEqualsToAuthorException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleSellerNotEqualsToAuthorException(
