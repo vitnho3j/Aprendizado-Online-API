@@ -45,24 +45,37 @@ public class SaleService {
     @Autowired
     private UserRepository userRepository;
 
+    public String generateSaleNotFoundMessage(Long id){
+        return "Venda não encontrada! Id: " + id + ", Tipo: " + Sale.class.getName();
+    }
+
+    public String generateUserNotFoundMessage(Long id){
+        return "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName();
+    }
+
+    public String generateCourseNotFoundMessage(Long id){
+        return "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName();
+    }
+    
+
     public Sale findById(Long id){
         Optional<Sale> sale = this.saleRepository.findById(id);
         return sale.orElseThrow(()-> new ObjectNotFoundException(
-            "Venda não encontrada! Id: " + id + ", Tipo: " + Sale.class.getName()
+            generateSaleNotFoundMessage(id)
         ));
     }
 
         public User findByIdUser(Long id){
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(()-> new ObjectNotFoundException(
-            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()
+           generateUserNotFoundMessage(id)
         ));
     }
 
     public Course findByIdCourse(Long id){
         Optional<Course> course = this.courseRepository.findById(id);
         return course.orElseThrow(()-> new ObjectNotFoundException(
-            "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName()
+            generateCourseNotFoundMessage(id)
         ));
     }
 
@@ -72,39 +85,70 @@ public class SaleService {
         return sales;
     }
 
-    @Transactional
-    public Sale create(Sale obj){
-        Course course = findByIdCourse(obj.getCourse().getId());
-        User user = findByIdUser(obj.getSeller().getId());
+    public Sale generateSetsCreateDTO(SaleCreateDTO obj){
+        Sale sale = new Sale();
+        sale.setSeller(obj.getSeller());
+        sale.setCourse(obj.getCourse());
+        return sale;
+    }
+
+    public void checkCourseInactive(Course course){
         if (course.getActive().equals(false)){
             throw new CreateSaleWithCourseInactive(SALE_INATIVE_COURSE);
         }
+    }
+
+    public void checkSellerInactive(User user){
         if (user.getActive().equals(false)){
             throw new CreateSaleWithSellerInactive(SALE_INATIVE_USER);
         }
+    }
+
+    public void checkSellerEqualsToAuthor(Course course, Sale obj){
         if (!course.getAuthor().getId().equals(obj.getSeller().getId())) {
             throw new SellerNotEqualsToAuthorException("O vendedor não é o autor do curso.");
         }
+    }
+
+    public void checkIfSaleExist(Sale obj){
         Optional<Sale> existingSale = saleRepository.findBySellerIdAndCourseId(obj.getSeller().getId(), obj.getCourse().getId());
         if (existingSale.isPresent()){
             throw new DuplicateSaleException(DUPLICATE_SELLER);
         }
+    }
+
+    public Sale countImmutableRecords(Sale obj){
         Long immutableCount = saleRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
             obj.setImmutable(false);
         } else {
             obj.setImmutable(true);
         }
-        obj.setValue(course.getPrice());
-        obj.setId(null);
-        obj = this.saleRepository.save(obj);
         return obj;
     }
 
+    public Sale generateSets(Sale obj, Course course){
+        obj.setValue(course.getPrice());
+        obj.setId(null);
+        return obj;
+    }
+
+    @Transactional
+    public Sale create(Sale obj){
+        Course course = findByIdCourse(obj.getCourse().getId());
+        User user = findByIdUser(obj.getSeller().getId());
+        checkCourseInactive(course);
+        checkSellerInactive(user);
+        checkSellerEqualsToAuthor(course, obj);
+        checkIfSaleExist(obj);
+        obj = countImmutableRecords(obj);
+        obj = generateSets(obj, course);
+        return this.saleRepository.save(obj);
+
+    }
+
     public Sale fromDTO(@Valid SaleCreateDTO obj){
-        Sale sale = new Sale();
-        sale.setSeller(obj.getSeller());
-        sale.setCourse(obj.getCourse());
+        Sale sale = generateSetsCreateDTO(obj);
         return sale;
     }
 
