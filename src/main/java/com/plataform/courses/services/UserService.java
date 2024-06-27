@@ -32,57 +32,97 @@ public class UserService {
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
+    private ContentFilterService filterService = new ContentFilterService();
+
+    public String generateUserNotFoundMessage(Long id){
+        return "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName();
+    }
+
     public User findById(Long id){
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(()-> new ObjectNotFoundException(
-            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()
+            generateUserNotFoundMessage(id)
         ));
     }
 
-    @Transactional
-    public User create(User obj){
-        ContentFilterService filterService = new ContentFilterService();
-        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getEmail());
-        if (filterService.containsBadWord(fieldsToCheck)) {
-            throw new BadWordException(
-                UNTANTED_CONTENT
-            );
+    public User generateSetsCreateDTO(UserCreateDTO obj){
+        User user = new User();
+        user.setName(obj.getName());
+        user.setEmail(obj.getEmail());
+        return user;
+    }
+
+    public User generateSetsUpdateDTO(UserUpdateDTO obj){
+        User user = new User();
+        user.setId(obj.getId());
+        user.setName(obj.getName());
+        user.setEmail(obj.getEmail());
+        return user;
+    }
+
+    public void checkIfIsImmutable(User obj, String str){
+        if (obj.getImmutable().equals(true)){
+            throw new NotPermissionImmutableData(str);
         }
+    }
+
+    public User makeUserInactive(User obj){
+        obj.setActive(false);
+        obj.setDeleted_at(LocalDateTime.now());
+        return obj;
+    }
+
+    public User countImmutableRecords(User obj){
         Long immutableCount = userRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
             obj.setImmutable(false);
         } else {
             obj.setImmutable(true);
         }
+        return obj;
+    }
+
+    public User setIdNull(User obj){
         obj.setId(null);
-        obj = this.userRepository.save(obj);
+        return obj;
+    }
+
+    @Transactional
+    public User create(User obj){;
+        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getEmail());
+        checkBadWord(fieldsToCheck);
+        User newUser = countImmutableRecords(obj);
+        newUser = setIdNull(newUser);
+        return this.userRepository.save(newUser);
+    }
+
+    public void checkBadWord(List<String> fields){
+        if (filterService.containsBadWord(fields)) {
+            throw new BadWordException(UNTANTED_CONTENT);
+        }
+    }
+
+    public User generateSetsUpdateUser(User obj){
+        obj.setName(obj.getName());
+        obj.setEmail(obj.getEmail());
+        obj.setImmutable(false);
         return obj;
     }
 
     @Transactional
     public User update(User obj){
-        ContentFilterService filterService = new ContentFilterService();
         List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getEmail());
-        if (filterService.containsBadWord(fieldsToCheck)) {
-            throw new BadWordException(UNTANTED_CONTENT);
-        }
         User newObj = findById(obj.getId());
-        if (newObj.getImmutable().equals(true)){
-            throw new NotPermissionImmutableData(NOT_PERMISSION_UPDATE);
-        }
-        newObj.setName(obj.getName());
-        newObj.setEmail(obj.getEmail());
-        newObj.setImmutable(false);
+        checkBadWord(fieldsToCheck);
+        checkIfIsImmutable(newObj, NOT_PERMISSION_UPDATE);
+        newObj = generateSetsUpdateUser(obj);
         return this.userRepository.save(newObj);
     }
 
     public void soft_delete(Long id){
         User obj = findById(id);
-        if (obj.getImmutable().equals(true)){
-            throw new NotPermissionImmutableData(NOT_PERMISSION_DELETE);
-        }
-        obj.setActive(false);
-        obj.setDeleted_at(LocalDateTime.now());
+        checkIfIsImmutable(obj, NOT_PERMISSION_DELETE);
+        obj = makeUserInactive(obj);
         this.userRepository.save(obj);
     }
 
@@ -101,18 +141,14 @@ public class UserService {
         return inativeUsers; 
     }
 
+
     public User fromDTO(@Valid UserCreateDTO obj){
-        User user = new User();
-        user.setName(obj.getName());
-        user.setEmail(obj.getEmail());
+        User user = generateSetsCreateDTO(obj);
         return user;
     }
 
     public User fromDTO(@Valid UserUpdateDTO obj){
-        User user = new User();
-        user.setId(obj.getId());
-        user.setName(obj.getName());
-        user.setEmail(obj.getEmail());
+        User user = generateSetsUpdateDTO(obj);
         return user;
     }
 

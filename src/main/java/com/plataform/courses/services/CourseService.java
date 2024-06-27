@@ -41,7 +41,7 @@ public class CourseService {
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
-    ContentFilterService filterService = new ContentFilterService();
+    private ContentFilterService filterService = new ContentFilterService();
 
     public String generateCourseNotFoundMessage(Long id){
         return "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName();
@@ -158,7 +158,7 @@ public class CourseService {
         checkBadWord(fieldsToCheck);
         Course newObj = findById(obj.getId());
         checkIfIsImmutable(newObj, NOT_PERMISSION_UPDATE);
-        newObj = generateSets(newObj);
+        newObj = generateSets(obj);
         return this.courseRepository.save(newObj);
     }
 
