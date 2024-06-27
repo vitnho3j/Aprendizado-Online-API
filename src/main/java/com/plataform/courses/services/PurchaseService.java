@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.plataform.courses.model.dto.PurchaseCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Purchase;
+import com.plataform.courses.model.entity.User;
 import com.plataform.courses.model.projections.PurchaseGetByIdCourseProjection;
 import com.plataform.courses.model.projections.PurchaseGetByIdUserProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.PurchaseRepository;
 import com.plataform.courses.repository.UserRepository;
+import com.plataform.courses.services.exceptions.CreatePurchaseWithBuyerInactive;
+import com.plataform.courses.services.exceptions.CreatePurchaseWithCourseInactive;
 import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
@@ -27,6 +30,10 @@ public class PurchaseService {
     private static final Integer MAX_IMMUTABLE_RECORDS = 5;
 
     private static String DUPLICATE_PURCHASE = "Este usuário já possui este curso";
+
+    private static String PURCHASE_INATIVE_USER = "Você não pode criar uma compra para um usuário inativo";
+
+    private static String PURCHASE_INATIVE_COURSE = "Você não pode criar uma compra para um usuário inativo";
     
     @Autowired
     private PurchaseRepository purchaseRepository;
@@ -44,6 +51,20 @@ public class PurchaseService {
         ));
     }
 
+    public User findByIdUser(Long id){
+        Optional<User> user = this.userRepository.findById(id);
+        return user.orElseThrow(()-> new ObjectNotFoundException(
+            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()
+        ));
+    }
+
+    public Course findByIdCourse(Long id){
+        Optional<Course> course = this.courseRepository.findById(id);
+        return course.orElseThrow(()-> new ObjectNotFoundException(
+            "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName()
+        ));
+    }
+
     public List<Purchase> findAll(){
         List<Purchase> purchases = this.purchaseRepository.findAll();
         return purchases;
@@ -51,10 +72,14 @@ public class PurchaseService {
 
     @Transactional
     public Purchase create(Purchase obj){
-        Course course = courseRepository.findById(obj.getCourse().getId())
-        .orElseThrow(() -> new ObjectNotFoundException (
-            "Curso não encontrado"
-        ));
+        Course course = findByIdCourse(obj.getCourse().getId());
+        User user = findByIdUser(obj.getBuyer().getId());
+        if (course.getActive().equals(false)){
+            throw new CreatePurchaseWithCourseInactive(PURCHASE_INATIVE_COURSE);
+        }
+        if (user.getActive().equals(false)){
+            throw new CreatePurchaseWithBuyerInactive(PURCHASE_INATIVE_USER);
+        }
         if (course.getAuthor().getId().equals(obj.getBuyer().getId())) {
             throw new SellerNotEqualsToAuthorException("O autor do curso não pode comprar o próprio curso.");
         }

@@ -24,6 +24,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
+import com.plataform.courses.services.exceptions.CreateCourseWithAuthorInativeException;
+import com.plataform.courses.services.exceptions.CreatePurchaseWithBuyerInactive;
+import com.plataform.courses.services.exceptions.CreatePurchaseWithCourseInactive;
+import com.plataform.courses.services.exceptions.CreateSaleWithCourseInactive;
+import com.plataform.courses.services.exceptions.CreateSaleWithSellerInactive;
 // import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
 import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
@@ -88,6 +93,66 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(
             badWordException,
             HttpStatus.BAD_REQUEST,
+            request);   
+    }
+
+    @ExceptionHandler(CreateCourseWithAuthorInativeException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCreateCourseWithAuthorInativeException(
+            CreateCourseWithAuthorInativeException createCourseWithAuthorInativeException,
+            WebRequest request) {
+        log.error("You cannot create a Course for an inactive Author!", createCourseWithAuthorInativeException);
+        return buildErrorResponse(
+            createCourseWithAuthorInativeException,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(CreatePurchaseWithBuyerInactive.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCreatePurchaseWithBuyerInactive(
+            CreatePurchaseWithBuyerInactive createPurchaseWithBuyerInactive,
+            WebRequest request) {
+        log.error("You cannot Purchase a course for an inactive User!", createPurchaseWithBuyerInactive);
+        return buildErrorResponse(
+            createPurchaseWithBuyerInactive,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(CreatePurchaseWithCourseInactive.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCreatePurchaseWithCourseInactive(
+            CreatePurchaseWithCourseInactive createPurchaseWithCourseInactive,
+            WebRequest request) {
+        log.error("You cannot create a Purchase for an inactive Course!", createPurchaseWithCourseInactive);
+        return buildErrorResponse(
+            createPurchaseWithCourseInactive,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(CreateSaleWithSellerInactive.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCreateSaleWithSellerInactive(
+            CreateSaleWithSellerInactive createSaleWithSellerInactive,
+            WebRequest request) {
+        log.error("You cannot create a Sale for an inactive Seller!", createSaleWithSellerInactive);
+        return buildErrorResponse(
+            createSaleWithSellerInactive,
+            HttpStatus.FORBIDDEN,
+            request);   
+    }
+
+    @ExceptionHandler(CreateSaleWithCourseInactive.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleCreateSaleWithCourseInactive(
+            CreateSaleWithCourseInactive createSaleWithCourseInactive,
+            WebRequest request) {
+        log.error("You cannot create a Sale for an inactive Course!", createSaleWithCourseInactive);
+        return buildErrorResponse(
+            createSaleWithCourseInactive,
+            HttpStatus.FORBIDDEN,
             request);   
     }
 

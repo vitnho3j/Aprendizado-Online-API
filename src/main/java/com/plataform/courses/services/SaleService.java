@@ -9,11 +9,14 @@ import org.springframework.stereotype.Service;
 import com.plataform.courses.model.dto.SaleCreateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.Sale;
+import com.plataform.courses.model.entity.User;
 import com.plataform.courses.model.projections.SaleGetByIdCourseProjection;
 import com.plataform.courses.model.projections.SaleGetByIdUserProjection;
 import com.plataform.courses.repository.CourseRepository;
 import com.plataform.courses.repository.SaleRepository;
 import com.plataform.courses.repository.UserRepository;
+import com.plataform.courses.services.exceptions.CreateSaleWithCourseInactive;
+import com.plataform.courses.services.exceptions.CreateSaleWithSellerInactive;
 import com.plataform.courses.services.exceptions.DuplicateSaleException;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
@@ -27,6 +30,10 @@ public class SaleService {
     private static final Integer MAX_IMMUTABLE_RECORDS = 5;
 
     private static String DUPLICATE_SELLER = "Este curso já foi vendido para este usuário";
+
+    private static String SALE_INATIVE_USER = "Você não pode criar uma venda para um usuário inativo";
+
+    private static String SALE_INATIVE_COURSE = "Você não pode criar uma venda para um curso inativo";
     
     @Autowired
     private SaleRepository saleRepository;
@@ -45,6 +52,21 @@ public class SaleService {
         ));
     }
 
+        public User findByIdUser(Long id){
+        Optional<User> user = this.userRepository.findById(id);
+        return user.orElseThrow(()-> new ObjectNotFoundException(
+            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()
+        ));
+    }
+
+    public Course findByIdCourse(Long id){
+        Optional<Course> course = this.courseRepository.findById(id);
+        return course.orElseThrow(()-> new ObjectNotFoundException(
+            "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName()
+        ));
+    }
+
+
     public List<Sale>findAll(){
         List<Sale> sales = this.saleRepository.findAll();
         return sales;
@@ -52,8 +74,14 @@ public class SaleService {
 
     @Transactional
     public Sale create(Sale obj){
-        Course course = courseRepository.findById(obj.getCourse().getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Curso não encontrado"));
+        Course course = findByIdCourse(obj.getCourse().getId());
+        User user = findByIdUser(obj.getSeller().getId());
+        if (course.getActive().equals(false)){
+            throw new CreateSaleWithCourseInactive(SALE_INATIVE_COURSE);
+        }
+        if (user.getActive().equals(false)){
+            throw new CreateSaleWithSellerInactive(SALE_INATIVE_USER);
+        }
         if (!course.getAuthor().getId().equals(obj.getSeller().getId())) {
             throw new SellerNotEqualsToAuthorException("O vendedor não é o autor do curso.");
         }

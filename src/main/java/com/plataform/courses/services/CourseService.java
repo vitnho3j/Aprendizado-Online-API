@@ -14,9 +14,12 @@ import com.plataform.courses.model.dto.CourseUpdateDTO;
 import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.projections.CourseProjection;
 import com.plataform.courses.repository.CourseRepository;
+import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
+import com.plataform.courses.services.exceptions.CreateCourseWithAuthorInativeException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
+import com.plataform.courses.model.entity.User;
 
 import jakarta.validation.Valid;
 
@@ -25,11 +28,16 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private static String UNTANTED_CONTENT = "Conteudo indesejado detectado";
 
     private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este curso";
 
     private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso";
+
+    private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
@@ -40,10 +48,21 @@ public class CourseService {
         ));
     }
 
+    public User findByIdUser(Long id){
+        Optional<User> user = this.userRepository.findById(id);
+        return user.orElseThrow(()-> new ObjectNotFoundException(
+            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName() 
+        ));
+    }
+
     @Transactional
     public Course create(Course obj){
         ContentFilterService filterService = new ContentFilterService();
         List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
+        User user = findByIdUser(obj.getAuthor().getId());
+        if (user.getActive().equals(false)){
+            throw new CreateCourseWithAuthorInativeException(AUTHOR_INATIVE_COURSE);
+        }
         if (filterService.containsBadWord(fieldsToCheck)) {
             throw new BadWordException(UNTANTED_CONTENT);
         }
