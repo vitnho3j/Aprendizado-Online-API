@@ -37,72 +37,135 @@ public class CourseService {
 
     private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso";
 
-    private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";
+    private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";   
 
     private static final Integer MAX_IMMUTABLE_RECORDS = 3;
+
+    ContentFilterService filterService = new ContentFilterService();
+
+    public String generateCourseNotFoundMessage(Long id){
+        return "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName();
+    }
+
+    public String generateUserNotFoundMessage(Long id){
+        return "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName();
+    }
 
     public Course findById(Long id){
         Optional<Course> course = this.courseRepository.findById(id);
         return course.orElseThrow(()-> new ObjectNotFoundException(
-            "Curso não encontrado! Id: " + id + ", Tipo: " + Course.class.getName() 
+            generateCourseNotFoundMessage(id)
         ));
     }
 
     public User findByIdUser(Long id){
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(()-> new ObjectNotFoundException(
-            "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName() 
+            generateUserNotFoundMessage(id)
         ));
     }
 
-    @Transactional
-    public Course create(Course obj){
-        ContentFilterService filterService = new ContentFilterService();
-        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
-        User user = findByIdUser(obj.getAuthor().getId());
+    public void checkBadWord(List<String> fields){
+        if (filterService.containsBadWord(fields)) {
+            throw new BadWordException(UNTANTED_CONTENT);
+        }
+    }
+
+    public void checkAuthorInative(User user){
         if (user.getActive().equals(false)){
             throw new CreateCourseWithAuthorInativeException(AUTHOR_INATIVE_COURSE);
         }
-        if (filterService.containsBadWord(fieldsToCheck)) {
-            throw new BadWordException(UNTANTED_CONTENT);
+    }
+
+    public Course checkIfIsImmutable(Course course, String str){
+        if (course.getImmutable().equals(true)){
+            throw new NotPermissionImmutableData(str);
         }
+        return course;
+    }
+
+    public Course generateSets(Course obj){
+        obj.setActive(obj.getActive());
+        obj.setDescription(obj.getDescription());
+        obj.setName(obj.getName());
+        obj.setPrice(obj.getPrice());
+        obj.setImmutable(false);
+        return obj;
+    }
+
+    public Course makeCourseInactive(Course course){
+        course.setActive(false);
+        course.setDeleted_at(LocalDateTime.now());
+        return course;
+    }
+
+    public Course makeCourseActive(Course course){
+        course.setActive(true);
+        course.setDeleted_at(null);
+        return course;
+    }
+
+    public Course countImmutableRecords(Course obj){
         Long immutableCount = courseRepository.countByImmutableTrue();
         if (immutableCount >= MAX_IMMUTABLE_RECORDS){
             obj.setImmutable(false);
         } else {
             obj.setImmutable(true);
         }
-        obj.setId(null);
-        obj = this.courseRepository.save(obj);
         return obj;
+    }
+
+    public Course generateSetsCreateDTO(CourseCreateDTO obj){
+        Course course = new Course();
+        course.setName(obj.getName());
+        course.setCategory(obj.getCategory());
+        course.setDescription(obj.getDescription());
+        course.setAuthor(obj.getAuthor());
+        course.setPrice(obj.getPrice());
+        return course;
+    }
+
+    public Course generateSetsUpdateDTO(CourseUpdateDTO obj){
+        Course course = new Course();
+        course.setId(obj.getId());
+        course.setName(obj.getName());
+        course.setCategory(obj.getCategory());
+        course.setDescription(obj.getDescription());
+        course.setPrice(obj.getPrice());
+        return course;
+    }
+
+    public Course setIdNull(Course course){
+        course.setId(null);
+        return course;
+    }
+
+    @Transactional
+    public Course create(Course obj){
+        List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
+        checkBadWord(fieldsToCheck);
+        User user = findByIdUser(obj.getAuthor().getId());
+        checkAuthorInative(user);
+        Course newObj = countImmutableRecords(obj);
+        newObj = setIdNull(newObj);
+        return this.courseRepository.save(newObj);
+  
     }
 
     @Transactional
     public Course update(Course obj){
-        ContentFilterService filterService = new ContentFilterService();
         List<String> fieldsToCheck = Arrays.asList(obj.getName(), obj.getCategory(), obj.getDescription());
-        if (filterService.containsBadWord(fieldsToCheck)) {
-            throw new BadWordException(UNTANTED_CONTENT);
-        }
+        checkBadWord(fieldsToCheck);
         Course newObj = findById(obj.getId());
-        if (newObj.getImmutable().equals(true)){
-            throw new NotPermissionImmutableData(NOT_PERMISSION_UPDATE);
-        }
-        newObj.setActive(obj.getActive());
-        newObj.setDescription(obj.getDescription());
-        newObj.setName(obj.getName());
-        newObj.setPrice(obj.getPrice());
-        newObj.setImmutable(false);
+        checkIfIsImmutable(newObj, NOT_PERMISSION_UPDATE);
+        newObj = generateSets(newObj);
         return this.courseRepository.save(newObj);
     }
 
     public void soft_delete(Long id){
         Course obj = findById(id);
-        if (obj.getImmutable().equals(true)){
-            throw new NotPermissionImmutableData(NOT_PERMISSION_DELETE);
-        }
-        obj.setActive(false);
-        obj.setDeleted_at(LocalDateTime.now());
+        obj = checkIfIsImmutable(obj, NOT_PERMISSION_DELETE);
+        obj = makeCourseInactive(obj);
         this.courseRepository.save(obj);
     }
 
@@ -118,8 +181,7 @@ public class CourseService {
 
     public void recoverCourse(Long id){
         Course course = findById(id);
-        course.setActive(true);
-        course.setDeleted_at(null);
+        course = makeCourseActive(course);
         this.courseRepository.save(course);
     }
 
@@ -134,22 +196,12 @@ public class CourseService {
     }
 
     public Course fromDTO(@Valid CourseCreateDTO obj){
-        Course course = new Course();
-        course.setName(obj.getName());
-        course.setCategory(obj.getCategory());
-        course.setDescription(obj.getDescription());
-        course.setAuthor(obj.getAuthor());
-        course.setPrice(obj.getPrice());
+        Course course = generateSetsCreateDTO(obj);
         return course;
     }
 
     public Course fromDTO(@Valid CourseUpdateDTO obj){
-        Course course = new Course();
-        course.setId(obj.getId());
-        course.setName(obj.getName());
-        course.setCategory(obj.getCategory());
-        course.setDescription(obj.getDescription());
-        course.setPrice(obj.getPrice());
+        Course course = generateSetsUpdateDTO(obj);
         return course;
     }
 }
