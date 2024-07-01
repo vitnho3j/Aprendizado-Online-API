@@ -34,9 +34,9 @@ public class CourseService {
 
     private static String UNTANTED_CONTENT = "Conteudo indesejado detectado";
 
-    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este curso";
+    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este curso, por favor, crie um curso novo para que possa deleta-lo";
 
-    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso";
+    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso,  por favor, crie um curso novo para que possa altera-lo";
 
     private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";   
 

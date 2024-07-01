@@ -1,25 +1,25 @@
 import config from "./config.js";
 
-// Pega o corpo (tbody) da tabela principal de exibição de usuários no html (tr_principal)
-const usersList = document.getElementById('users');
+// Pega o corpo (tbody) da tabela principal de exibição de cursos no html (tr_principal)
+const coursesList = document.getElementById('courses');
 
-// Pega a tabela principal para exibir usuários no html
+// Pega a tabela principal para exibir cursos no html
 const tr_principal = document.getElementById("tr-principal");
 
-// Pega a opção de usuários ativos no html
+// Pega a opção de cursos ativos no html
 const option_active = document.getElementById("option-active");
 
-// Pega a opção de usuários inativos no html
+// Pega a opção de cursos inativos no html
 const option_inative = document.getElementById("options-inative-container");
 
-// Guarda o id do usuário clicado quando um click é executado em um dos ícones na tabela (Compras, vendas, cursos, edit ou delete)
-var userClicked 
+// Guarda o id do curso clicado quando um click é executado em um dos ícones na tabela (Compras, vendas, edit ou delete)
+var courseClicked 
 
 
-// Faz com que "tr-principal" e "users" sejam limpos para adição de novos dados
+// Faz com que "tr-principal" e "courses" sejam limpos para adição de novos dados
 function removeChild(){
-    while (usersList.firstChild) {
-        usersList.removeChild(usersList.firstChild);
+    while (coursesList.firstChild) {
+        coursesList.removeChild(coursesList.firstChild);
     }
     while (tr_principal.firstChild) {
         tr_principal.removeChild(tr_principal.firstChild);
@@ -32,45 +32,69 @@ function changeOptions(){
     option_inative.style.display = "grid"
 }
 
-// Cria a estrutura básica para mostrar os usuários na página
-function createStructureUsers(){
+// Cria a estrutura básica para mostrar os cursos na página
+function createStructureCursos(){
     
     const thId = document.createElement("th");
     const thName = document.createElement("th");
-    const thEmail = document.createElement("th");
+    const thCategory = document.createElement("th");
+    const thDescription = document.createElement("th");
+    const thPrice = document.createElement("th");
+    const thAuthor = document.createElement("th");
 
     thId.textContent = "Id";
     thName.textContent = "Nome";
-    thEmail.textContent = "Email";
+    thCategory.textContent = "Categoria";
+    thDescription.textContent = "Descrição"
+    thPrice.textContent = "Preço"
+    thAuthor.textContent = "Autor"
     tr_principal.appendChild(thId);
     tr_principal.appendChild(thName);
-    tr_principal.appendChild(thEmail);
+    tr_principal.appendChild(thDescription);
+    tr_principal.appendChild(thCategory);
+    tr_principal.appendChild(thPrice);
+    tr_principal.appendChild(thAuthor);
 }
 
-// Cria cada coluna e seta cada usuário nela
-function setUser(user, tr){
+// Cria cada coluna e seta cada curso nela
+function setCourse(course, tr){
     const tdId = document.createElement('td');
-    tdId.textContent = user.id;
+    tdId.textContent = course.id;
     tr.appendChild(tdId);
 
-    // Coluna com o nome do usuário
+    // Coluna com o nome do curso
     const tdName = document.createElement('td');
-    tdName.textContent = user.name;
+    tdName.textContent = course.name;
     tr.appendChild(tdName);
 
-    // Coluna com o email do usuário
-    const tdEmail = document.createElement('td');
-    tdEmail.textContent = user.email;
-    tr.appendChild(tdEmail);
+    // Coluna com a descrição do curso
+    const tdDescription = document.createElement('td');
+    tdDescription.textContent = course.description;
+    tr.appendChild(tdDescription);
+
+    // Coluna com a categoria do curso
+    const tdCategory = document.createElement('td');
+    tdCategory.textContent = course.category;
+    tr.appendChild(tdCategory);
+
+    // Coluna com o preço do curso
+    const tdPrice = document.createElement('td');
+    tdPrice.textContent = course.price;
+    tr.appendChild(tdPrice);
+
+    // Coluna com o autor do curso
+    const tdAutor = document.createElement('td');
+    tdAutor.textContent = course.author.id;
+    tr.appendChild(tdAutor);
 }
 
 // Cria o ícone de editar
-function createEditIcon(tdActions, user){
+function createEditIcon(tdActions, course){
     const editLink = document.createElement('a');
     editLink.href = '#editEmployeeModal';
     editLink.classList.add('edit');
     editLink.dataset.toggle = 'modal';
-    editLink.addEventListener('click', () => setUserClicked(user.id)); // Adiciona evento de clique
+    editLink.addEventListener('click', () => setCourseClicked(course.id)); // Adiciona evento de clique
     const editIcon = document.createElement('i');
     editIcon.classList.add('material-icons');
     editIcon.dataset.toggle = 'tooltip';
@@ -81,12 +105,12 @@ function createEditIcon(tdActions, user){
 }
 
 //Cria o ícone de deletar
-function createDeleteIcon(tdActions, user){
+function createDeleteIcon(tdActions, course){
     const deleteLink = document.createElement('a');
     deleteLink.href = '#deleteEmployeeModal';
     deleteLink.classList.add('delete');
     deleteLink.dataset.toggle = 'modal';
-    deleteLink.addEventListener('click', () => setUserClicked(user.id)); // Adiciona evento de clique
+    deleteLink.addEventListener('click', () => setCourseClicked(course.id)); // Adiciona evento de clique
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('material-icons');
     deleteIcon.dataset.toggle = 'tooltip';
@@ -97,12 +121,12 @@ function createDeleteIcon(tdActions, user){
 }
 
 // Cria o ícone de compras
-function createBuyIcon(tdActions, user){
+function createBuyIcon(tdActions, course){
     const buyLink = document.createElement('a');
     buyLink.href = '#buyEmployeeModal';
     buyLink.classList.add('buy');
     buyLink.dataset.toggle = 'modal';
-    buyLink.addEventListener('click', () => loadPurchases(user.id)); // Adiciona evento de clique
+    buyLink.addEventListener('click', () => loadPurchases(course.id)); // Adiciona evento de clique
     const buyIcon = document.createElement('i');
     buyIcon.classList.add('material-icons');
     buyIcon.dataset.toggle = 'tooltip';
@@ -113,12 +137,12 @@ function createBuyIcon(tdActions, user){
 }
 
 // Cria o ícone de vendas
-function createSellIcon(tdActions, user){
+function createSellIcon(tdActions, course){
     const sellLink = document.createElement('a');
     sellLink.href = '#sellEmployeeModal';
     sellLink.classList.add('sell');
     sellLink.dataset.toggle = 'modal';
-    sellLink.addEventListener('click', () => loadSales(user.id)); // Adiciona evento de clique
+    sellLink.addEventListener('click', () => loadSales(course.id)); // Adiciona evento de clique
     const sellIcon = document.createElement('i');
     sellIcon.classList.add('material-icons');
     sellIcon.dataset.toggle = 'tooltip';
@@ -128,52 +152,56 @@ function createSellIcon(tdActions, user){
     tdActions.appendChild(sellLink);
 }
 
-// Cria o ícone de cursos
-function createCourseIcon(tdActions, user){
-    const courseLink = document.createElement('a');
-    courseLink.href = '#courseEmployeeModal';
-    courseLink.classList.add('course');
-    courseLink.dataset.toggle = 'modal';
-    courseLink.addEventListener('click', () => loadCourses(user.id)); // Adiciona evento de clique
-    const courseIcon = document.createElement('i');
-    courseIcon.classList.add('material-icons');
-    courseIcon.dataset.toggle = 'tooltip';
-    courseIcon.title = 'Course';
-    courseIcon.textContent = '\u{E80C}'; // Unicode para o ícone de cursos
-    courseLink.appendChild(courseIcon);
-    tdActions.appendChild(courseLink);
+// Cria o ícone para reativar um curso
+function createReactivationIcon(tdActions, course) {
+    const reactivationLink = document.createElement('a');
+    reactivationLink.href = '#reactivateCourseModal';
+    reactivationLink.classList.add('reactivate');
+    reactivationLink.dataset.toggle = 'modal';
+    reactivationLink.addEventListener('click', () => reactivateCourse(course.id)); // Adiciona evento de clique
+    const reactivationIcon = document.createElement('i');
+    reactivationIcon.classList.add('material-icons');
+    reactivationIcon.dataset.toggle = 'tooltip';
+    reactivationIcon.title = 'Reativar';
+    reactivationIcon.textContent = '\u{E5D5}'; // Unicode para o ícone de "refresh"
+    reactivationLink.appendChild(reactivationIcon);
+    tdActions.appendChild(reactivationLink);
 }
 
-// Cria a estrutura e ícones para usuários
-function createIconsUsers(tdActions, user){
-    createEditIcon(tdActions, user);
-    createDeleteIcon(tdActions, user);
-    createBuyIcon(tdActions, user);
-    createSellIcon(tdActions, user);
-    createCourseIcon(tdActions, user);
+function createInativeIcons(tdActions, course){
+    createReactivationIcon(tdActions, course)
+}
+
+
+// Cria a estrutura de ícones para cursos
+function createIconsCourses(tdActions, course){
+    createEditIcon(tdActions, course);
+    createDeleteIcon(tdActions, course);
+    createBuyIcon(tdActions, course);
+    createSellIcon(tdActions, course);
 }
 
 // Cria a lógica de exibição de usuários
-function loadUsersLogic(user){
+function loadCoursesLogic(course){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
-    setUser(user, tr);
-    createIconsUsers(tdActions, user);
+    setCourse(course, tr);
+    createIconsCourses(tdActions, course);
     tr.appendChild(tdActions);
-    usersList.appendChild(tr);
+    coursesList.appendChild(tr);
 }
 
-// Faz o request para o backend pegando todos os usuários
-function loadUsers() {
+// Faz o request para o backend pegando todos os cursos
+function loadCourses() {
     removeChild()
     changeOptions()
-    createStructureUsers()
+    createStructureCursos()
 
-    fetch(`${config.baseURL}/users`)
+    fetch(`${config.baseURL}/courses`)
         .then(response => response.json())
         .then(data => {
-            data.filter(user => user.active === true).forEach(user =>{
-                loadUsersLogic(user)
+            data.filter(course => course.active === true).forEach(course =>{
+                loadCoursesLogic(course)
             });
         })
         .catch(error => {
@@ -181,26 +209,27 @@ function loadUsers() {
         });
 }
 
-// Carrega os usuários inativos (deletados)
-function loadUsersInativeLogic(user){
+// Carrega os cursos inativos (deletados)
+function loadCoursesInativeLogic(course){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
-    setUser(user, tr);
+    setCourse(course, tr);
+    createInativeIcons(tdActions, course)
     tr.appendChild(tdActions);
-    usersList.appendChild(tr);
+    coursesList.appendChild(tr);
 }
 
-// Carrega os usuários ativos (Não deletados) 
-function loadUsersInative() {
+// Carrega os cursos ativos (Não deletados) 
+function loadCoursesInative() {
     removeChild()
     changeOptions()
-    createStructureUsers();
+    createStructureCursos();
 
-    fetch(`${config.baseURL}/users`)
+    fetch(`${config.baseURL}/courses`)
         .then(response => response.json())
         .then(data => {
-            data.filter(user => user.active === false).forEach(user =>{
-                loadUsersInativeLogic(user);
+            data.filter(course => course.active === false).forEach(course =>{
+                loadCoursesInativeLogic(course);
             });
         })
         .catch(error => {
@@ -210,109 +239,21 @@ function loadUsersInative() {
 
 // Adicionando as duas funções para o contexto do documento
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('div[onclick="loadUsersInative()"]').addEventListener('click', loadUsersInative);
+    document.querySelector('div[onclick="loadCoursesInative()"]').addEventListener('click', loadCoursesInative);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('div[onclick="loadUsers()"]').addEventListener('click', loadUsers);
+    document.querySelector('div[onclick="loadCourses()"]').addEventListener('click', loadCourses);
 });
 
-// Retorna uma mensagem quando um usuário não possui cursos
-function noCourses(){
-    const h3 = document.createElement("h3");
-    h3.textContent = "Não há cursos";
-    tr_principal.appendChild(h3);
-}
-
-// Seta os cursos de um usuário na tabela
-function setCourses(course, tr){
-    // Coluna com o ID da compra
-    const tdId = document.createElement('td');
-    tdId.textContent = course.id;
-    tr.appendChild(tdId);
-
-    const tdName = document.createElement('td');
-    tdName.textContent = course.name;
-    tr.appendChild(tdName);
-
-    // Coluna com o valor da compra
-    const tdDescription = document.createElement('td');
-    tdDescription.textContent = course.description;
-    tr.appendChild(tdDescription);
-
-    // Coluna com o ID do curso
-    const tdActive = document.createElement('td');
-    tdActive.textContent = course.active;
-    tr.appendChild(tdActive);
-
-    const tdPrice = document.createElement('td');
-    tdPrice.textContent = course.price;
-    tr.appendChild(tdPrice);
-
-    const tdCategory = document.createElement('td');
-    tdCategory.textContent = course.category;
-    tr.appendChild(tdCategory);
-}
-
-// Cria a estrutura da tabela de cursos
-function createCoursesStructure(){
-    const thId = document.createElement("th");
-    const thName = document.createElement("th");
-    const thDescription = document.createElement("th");
-    const thActive = document.createElement("th");
-    const thPrice = document.createElement("th");
-    const thCategory = document.createElement("th");
-    thId.textContent = "Id";
-    thName.textContent = "Nome";
-    thDescription.textContent = "Description";
-    thActive.textContent = "Ativo";
-    thPrice.textContent = "Price";
-    thCategory.textContent = "Categoria";
-    tr_principal.appendChild(thId);
-    tr_principal.appendChild(thName);
-    tr_principal.appendChild(thDescription);
-    tr_principal.appendChild(thActive);
-    tr_principal.appendChild(thPrice);
-    tr_principal.appendChild(thCategory);
-}
-
-// Implementa a lógica de exibição de cursos de um usuário
-function loadCoursesLogic(course){
-    const tr = document.createElement('tr');
-    setCourses(course, tr)
-    
-    const tdActions = document.createElement('td');
-    tr.appendChild(tdActions);
-    usersList.appendChild(tr);
-}
 
 function changeOptionsButtons(){
     option_active.textContent = "Voltar"
     option_inative.style.display = "none"
 }
 
-// Faz um request para o backend para pegar os cursos de um úsuario
-function loadCourses(userId) {
-    removeChild()
-    fetch(`${config.baseURL}/courses/user/${userId}`)
-        .then(response => response.json())
-        .then(courses => {
-            if (!courses || courses.length === 0) {
-                noCourses();
-            } else {       
-            createCoursesStructure()
-            courses.forEach(course => {
-                loadCoursesLogic(course);     
-            });
-        }
-        changeOptionsButtons()
-    })
-        .catch(error => {
-            alert(error.message)
-        });
-}
 
-// Retorna uma mensagem quando um usuário não possui vendas
+// Retorna uma mensagem quando um curso não possui vendas
 function noSales(){
     const h3 = document.createElement("h3");
     h3.textContent = "Não há vendas";
@@ -324,22 +265,25 @@ function createSalesStructure(){
     const thId = document.createElement("th");
     const thDate = document.createElement("th");
     const thValue = document.createElement("th");
+    const thSeller = document.createElement("th");
     thDate.textContent = "Data";
     thValue.textContent = "Valor";
     thId.textContent = "Id";
+    thSeller.textContent = "Vendedor";
     tr_principal.appendChild(thId);
     tr_principal.appendChild(thDate);
     tr_principal.appendChild(thValue);
+    tr_principal.appendChild(thSeller);
 }
 
-// Seta as vendas de um usuário na tabela
+// Seta as vendas de um curso na tabela
 function setSales(sale, tr){
-    // Coluna com o ID da compra
+    // Coluna com o ID da venda
     const tdId = document.createElement('td');
     tdId.textContent = sale.id;
     tr.appendChild(tdId);
 
-    // Coluna com o timestamp da compra
+    // Coluna com o timestamp da venda
     const tdTimestamp = document.createElement('td');
     
     // Criar um objeto Date
@@ -347,16 +291,20 @@ function setSales(sale, tr){
     tdTimestamp.textContent = date;
     tr.appendChild(tdTimestamp);
 
-    // Coluna com o valor da compra
+    // Coluna com o valor da venda
     const tdValue = document.createElement('td');
     tdValue.textContent = sale.value;
     tr.appendChild(tdValue);
 
+    // Coluna com o id do vendedor
+    const tdVendedor = document.createElement('td');
+    tdVendedor.textContent = sale.seller.id;
+    tr.appendChild(tdVendedor);
 }
 
 // Implementa a lógica de exibição das vendas
 function loadSalesLogic(sale){
-    // Criando a estrutura HTML para cada compra
+    // Criando a estrutura HTML para cada venda
     const tr = document.createElement('tr');
 
     setSales(sale, tr)
@@ -366,14 +314,14 @@ function loadSalesLogic(sale){
     // Adicione seus ícones de ação aqui, se necessário
     tr.appendChild(tdActions);
 
-    // Adicionando a linha (tr) à lista de usuários
-    usersList.appendChild(tr);
+    // Adicionando a linha (tr) à lista de cursos
+    coursesList.appendChild(tr);
 }
 
-// Faz o request para o back pegando as vendas de um usuário
-function loadSales(userId) {
+// Faz o request para o back pegando as vendas de um curso
+function loadSales(courseId) {
     removeChild()
-    fetch(`${config.baseURL}/sales/user/${userId}`)
+    fetch(`${config.baseURL}/sales/course/${courseId}`)
         .then(response => response.json())
         .then(sales => {
             if (!sales || sales.length === 0) {
@@ -391,7 +339,7 @@ function loadSales(userId) {
         });
 }
 
-// Retorna uma mensagem quando um usuário não possui compras
+// Retorna uma mensagem quando um curso não possui compras
 function noPurchases(){
     const h3 = document.createElement("h3");
     h3.textContent = "Não há compras";
@@ -403,15 +351,18 @@ function createPurchasesStructure(){
     const thId = document.createElement("th");
     const thDate = document.createElement("th");
     const thValue = document.createElement("th");
+    const thBuyer = document.createElement("th");
     thDate.textContent = "Data";
     thValue.textContent = "Valor";
     thId.textContent = "Id";
+    thBuyer.textContent = "Comprador";
     tr_principal.appendChild(thId);
     tr_principal.appendChild(thDate);
     tr_principal.appendChild(thValue);
+    tr_principal.appendChild(thBuyer);
 }
 
-// Seta as compras de um usuário
+// Seta as compras de um curso
 function setPurchases(purchase, tr){
 
     // Coluna com o ID da compra
@@ -432,6 +383,12 @@ function setPurchases(purchase, tr){
     tdValue.textContent = purchase.value;
     tr.appendChild(tdValue);
 
+    // Coluna com o id do comprador
+    const tdBuyer = document.createElement('td');
+    tdBuyer.textContent = purchase.buyer.id;
+    tr.appendChild(tdBuyer);
+
+
 }
 
 // Cria a lógica do carregamento de compras
@@ -441,10 +398,10 @@ function loadPurchasesLogic(purchase){
 
     const tdActions = document.createElement('td');
     tr.appendChild(tdActions);
-    usersList.appendChild(tr);
+    coursesList.appendChild(tr);
 }
 
-// Faz o request de compras de um usuário para o endpoint
+// Faz o request de compras de um curso para o endpoint
 function loadPurchases(courseId) {
     removeChild()
     fetch(`${config.baseURL}/purchases/course/${courseId}`)
@@ -465,15 +422,10 @@ function loadPurchases(courseId) {
         });
 }
 
-function setUserClicked(userId){
-    userClicked = userId
-}
-
-// Função para deletar usuário
-function deleteUser() {
-    // alert(`Será excutado na URL: ${config.baseURL}/users/${userClicked}`)
-    fetch(`${config.baseURL}/users/${userClicked}`, {
-        method: 'DELETE'
+// Faz um request para o back para reativar um curso
+function reactivateCourse(courseId){
+    fetch(`${config.baseURL}/courses/recover/${courseId}`, {
+        method: 'PUT'
     }).then(response => {
         if (response.ok){
             location.reload();
@@ -487,35 +439,61 @@ function deleteUser() {
     });
 }
 
-// Carrega os usuários quando a página "/users" é iniciada.
+function setCourseClicked(courseId){
+    courseClicked = courseId
+}
+
+// Função para deletar curso
+function deleteCourse() {
+    // alert(`Será excutado na URL: ${config.baseURL}/courses/${courseClicked}`)
+    fetch(`${config.baseURL}/courses/${courseClicked}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok){
+            location.reload();
+        } else {
+            return response.json().then(error => {
+                alert(error.message || "Erro desconhecido");
+            })
+        }
+    }).catch(error => {
+        console.error('Erro ao deletar curso:', error);
+    });
+}
+
+// Carrega os cursos quando a página "/courses" é iniciada.
 document.addEventListener('DOMContentLoaded', function() {
-    loadUsers();
+    loadCourses();
 });
 
-// Adicionando um EventListener para o submit do edit user form
-document.getElementById('deleteUserForm').addEventListener('submit', function(event) {
+// Adicionando um EventListener para o submit do edit course form
+document.getElementById('deleteCourseForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Evita o envio padrão do formulário
 
-    // Chama a função deleteUser() para deletar o usuário clicado
-    deleteUser();
+    // Chama a função deleteCourse() para deletar o curso clicado
+    deleteCourse();
 });
 
 
-// Adicionando um EventListener para o submit do edit user form
+// Adicionando um EventListener para o submit do edit course form
 document.getElementById('editForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Evita o envio padrão do formulário
 
     const name = document.getElementById('edit-name').value;
-    const email = document.getElementById('edit-email').value;
+    const description = document.getElementById('edit-description').value;
+    const category = document.getElementById('edit-category').value;
+    const price = document.getElementById('edit-price').value;
 
-    fetch(`${config.baseURL}/users/${userClicked}`, {
+    fetch(`${config.baseURL}/courses/${courseClicked}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         name: name,
-        email: email
+        description: description,
+        category: category,
+        price: price,
       })
     })
     .then(response => {
@@ -533,21 +511,27 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
     });
   });
 
-// Adicionando um EventListener para o submit do create user form
-document.getElementById('userForm').addEventListener('submit', function(event) {
+// Adicionando um EventListener para o submit do create course form
+document.getElementById('courseForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Evita o envio padrão do formulário
 
     const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
+    const description = document.getElementById('description').value;
+    const category = document.getElementById('category').value;
+    const price = document.getElementById('price').value;
+    const authorId = document.getElementById('author').value;
 
-    fetch(`${config.baseURL}/users`, {
+    fetch(`${config.baseURL}/courses`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         name: name,
-        email: email
+        description: description,
+        category: category,
+        price: price,
+        author: { id: authorId }
       })
     })
     .then(response => {

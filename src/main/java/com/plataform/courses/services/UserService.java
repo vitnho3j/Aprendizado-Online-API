@@ -27,9 +27,9 @@ public class UserService {
 
     private static String UNTANTED_CONTENT = "Conteúdo indesejado detectado";
 
-    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este usuário";
+    private static String NOT_PERMISSION_DELETE = "Você não tem permissão para deletar este usuário, por favor, crie um usuário novo para que possa deleta-lo";
 
-    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este usuário";
+    private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este usuário, por favor, crie um usuário novo para que possa altera-lo";
 
     private static String INATIVE_USER = "Você não pode atualizar as informações de um usuário inativo";
 
