@@ -181,7 +181,7 @@ function createIconsCourses(tdActions, course){
     createSellIcon(tdActions, course);
 }
 
-// Cria a lógica de exibição de usuários
+// Cria a lógica de exibição de cursos
 function loadCoursesLogic(course){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
@@ -435,7 +435,7 @@ function reactivateCourse(courseId){
             })
         }
     }).catch(error => {
-        console.error('Erro ao deletar usuário:', error);
+        console.error('Erro ao deletar curso:', error);
     });
 }
 
