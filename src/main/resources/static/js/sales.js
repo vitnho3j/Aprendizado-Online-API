@@ -1,52 +1,52 @@
 import config from "./config.js";
 
-// Pega o corpo (tbody) da tabela principal de exibição de compras no html (tr_principal)
-const purchasesList = document.getElementById('purchases');
+// Pega o corpo (tbody) da tabela principal de exibição de vendas no html (tr_principal)
+const salesList = document.getElementById('sales');
 
-// Cria cada coluna e seta cada compra nela
-function setPurchases(purchase, tr){
+// Cria cada coluna e seta cada venda nela
+function setSales(sale, tr){
 
-    // Coluna com o id da compra
+    // Coluna com o id da venda
     const tdId = document.createElement('td');
-    tdId.textContent = purchase.id;
+    tdId.textContent = sale.id;
     tr.appendChild(tdId);
     
     const tdTimestamp = document.createElement('td');
-    tdTimestamp.textContent = purchase.timestamp;
+    tdTimestamp.textContent = sale.timestamp;
     tr.appendChild(tdTimestamp);
 
-    // Coluna com o valor da compra
+    // Coluna com o valor da venda
     const tdValue = document.createElement('td');
-    tdValue.textContent = purchase.value;
+    tdValue.textContent = sale.value;
     tr.appendChild(tdValue);
 
-    // Coluna com o id do comprador
-    const tdBuyer = document.createElement('td');
-    tdBuyer.textContent = purchase.buyer.id;
-    tr.appendChild(tdBuyer);
+    // Coluna com o id do vendedor
+    const tdSeller = document.createElement('td');
+    tdSeller.textContent = sale.seller.id;
+    tr.appendChild(tdSeller);
 
-    // Coluna com o id do curso da compra
+    // Coluna com o id do curso da venda
     const tdCourse = document.createElement('td');
-    tdCourse.textContent = purchase.course.id;
+    tdCourse.textContent = sale.course.id;
     tr.appendChild(tdCourse);
 }
 
-// Cria a lógica de exibição de compras
-function loadPurchasesLogic(purchase){
+// Cria a lógica de exibição de vendas
+function loadSalesLogic(sale){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
-    setPurchases(purchase, tr);
+    setSales(sale, tr);
     tr.appendChild(tdActions);
-    purchasesList.appendChild(tr);
+    salesList.appendChild(tr);
 }
 
-// Faz o request para o backend pegando todas as compras
-function loadPurchases() {
-    fetch(`${config.baseURL}/purchases`)
+// Faz o request para o backend pegando todas as vendas
+function loadSales() {
+    fetch(`${config.baseURL}/sales`)
         .then(response => response.json())
         .then(data => {
-            data.forEach(purchase =>{
-                loadPurchasesLogic(purchase)
+            data.forEach(sale =>{
+                loadSalesLogic(sale)
             });
         })
         .catch(error => {
@@ -54,26 +54,26 @@ function loadPurchases() {
         });
 }
 
-// Carrega as compras quando a página "/purchases" é iniciada.
+// Carrega as vendas quando a página "/vendas" é iniciada.
 document.addEventListener('DOMContentLoaded', function() {
-    loadPurchases();
+    loadSales();
 });
 
-document.getElementById('purchaseForm').addEventListener('submit', function(event) {
+document.getElementById('saleForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Evita o envio padrão do formulário
 
-    const idBuyer = document.getElementById('id_buyer').value;
+    const idSeller = document.getElementById('id_seller').value;
     const idCourse = document.getElementById('id_course').value;
 
 
-    fetch(`${config.baseURL}/purchases`, {
+    fetch(`${config.baseURL}/sales`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        buyer:{
-            id:idBuyer
+        seller:{
+            id:idSeller
         },
         course:{
             id:idCourse

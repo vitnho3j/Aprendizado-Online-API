@@ -402,12 +402,15 @@ function noPurchases(){
 function createPurchasesStructure(){
     const thId = document.createElement("th");
     const thDate = document.createElement("th");
+    const thCourse = document.createElement("th");
     const thValue = document.createElement("th");
     thDate.textContent = "Data";
     thValue.textContent = "Valor";
+    thCourse.textContent = "Curso"
     thId.textContent = "Id";
     tr_principal.appendChild(thId);
     tr_principal.appendChild(thDate);
+    tr_principal.appendChild(thCourse)
     tr_principal.appendChild(thValue);
 }
 
@@ -427,10 +430,16 @@ function setPurchases(purchase, tr){
     tdTimestamp.textContent = date;
     tr.appendChild(tdTimestamp);
 
+    // Coluna com o id do curso
+    const tdCourse = document.createElement('td');
+    tdCourse.textContent = purchase.course.id;
+    tr.appendChild(tdCourse);
+
     // Coluna com o valor da compra
     const tdValue = document.createElement('td');
     tdValue.textContent = purchase.value;
     tr.appendChild(tdValue);
+    
 
 }
 
@@ -445,9 +454,9 @@ function loadPurchasesLogic(purchase){
 }
 
 // Faz o request de compras de um usuário para o endpoint
-function loadPurchases(courseId) {
+function loadPurchases(userId) {
     removeChild()
-    fetch(`${config.baseURL}/purchases/course/${courseId}`)
+    fetch(`${config.baseURL}/purchases/user/${userId}`)
         .then(response => response.json())
         .then(purchases => {
             if (!purchases || purchases.length === 0) {
