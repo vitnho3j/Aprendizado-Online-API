@@ -1,8 +1,6 @@
 package com.plataform.courses.exceptions;
-
-// import java.io.IOException;
-
-
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,9 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-// import org.springframework.security.access.AccessDeniedException;
-// import org.springframework.security.core.AuthenticationException;
-// import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import com.plataform.courses.services.exceptions.BadWordException;
 import com.plataform.courses.services.exceptions.BuyerEqualsToAuthorException;
 import com.plataform.courses.services.exceptions.CourseInactiveUpdateException;
@@ -30,17 +24,12 @@ import com.plataform.courses.services.exceptions.CreatePurchaseWithBuyerInactive
 import com.plataform.courses.services.exceptions.CreatePurchaseWithCourseInactive;
 import com.plataform.courses.services.exceptions.CreateSaleWithCourseInactive;
 import com.plataform.courses.services.exceptions.CreateSaleWithSellerInactive;
-// import com.plataform.courses.services.exceptions.AuthorizationException;
 import com.plataform.courses.services.exceptions.DataBindingViolationException;
 import com.plataform.courses.services.exceptions.DuplicatePurchaseException;
 import com.plataform.courses.services.exceptions.NotPermissionImmutableData;
 import com.plataform.courses.services.exceptions.ObjectNotFoundException;
 import com.plataform.courses.services.exceptions.SellerNotEqualsToAuthorException;
 import com.plataform.courses.services.exceptions.UserInactiveUpdateException;
-
-// import jakarta.servlet.ServletException;
-// import jakarta.servlet.http.HttpServletRequest;
-// import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,12 +51,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             @NonNull
             WebRequest request) {
+        List<String> errorMessages = new ArrayList<>();
+        
+        for (FieldError fieldError : methodArgumentNotValidException.getBindingResult().getFieldErrors()) {
+            String errorMessage = String.format("%s: %s", fieldError.getField(), fieldError.getDefaultMessage());
+            errorMessages.add(errorMessage);
+        }
+        
+        String detailedMessage = String.join(", ", errorMessages);
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Validation error. Check 'errors' field for details.");
+                detailedMessage);
+        
         for (FieldError fieldError : methodArgumentNotValidException.getBindingResult().getFieldErrors()) {
             errorResponse.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
         }
+        
         return ResponseEntity.unprocessableEntity().body(errorResponse);
     }
 

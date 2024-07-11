@@ -38,7 +38,7 @@ public class CourseService {
 
     private static String NOT_PERMISSION_UPDATE = "Você não tem permissão para alterar este curso,  por favor, crie um curso novo para que possa altera-lo";
 
-    private static String AUTHOR_INATIVE_COURSE = "Você não pode criar um curso para um usuário inativo";   
+    private static String AUTHOR_INATIVE_COURSE = "Você não pode criar/recuperar um curso para um usuário inativo";   
 
     
     private static String INATIVE_COURSE = "Você não pode atualizar as informações de um curso inativo";  
@@ -199,6 +199,7 @@ public class CourseService {
 
     public void recoverCourse(Long id){
         Course course = findById(id);
+        checkAuthorInative(course.getAuthor());
         course = makeCourseActive(course);
         this.courseRepository.save(course);
     }

@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 @Service
 public class SaleService {
 
-    private static final Integer MAX_IMMUTABLE_RECORDS = 5;
+    private static final Integer MAX_IMMUTABLE_RECORDS = 3;
 
     private static String SALE_INATIVE_USER = "Você não pode criar uma venda para um usuário inativo";
 
@@ -62,7 +62,7 @@ public class SaleService {
         ));
     }
 
-        public User findByIdUser(Long id){
+    public User findByIdUser(Long id){
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(()-> new ObjectNotFoundException(
            generateUserNotFoundMessage(id)

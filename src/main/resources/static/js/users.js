@@ -12,6 +12,9 @@ const option_active = document.getElementById("option-active");
 // Pega a opção de usuários inativos no html
 const option_inative = document.getElementById("options-inative-container");
 
+// Pega o h3 que informa qual classe de um ícone clicado
+const content_class = document.getElementById("content-class")
+
 // Guarda o id do usuário clicado quando um click é executado em um dos ícones na tabela (Compras, vendas, cursos, edit ou delete)
 var userClicked 
 
@@ -24,6 +27,16 @@ function removeChild(){
     while (tr_principal.firstChild) {
         tr_principal.removeChild(tr_principal.firstChild);
     }
+}
+
+// Limpa o h3 do className quando o botão voltar é clicado
+function cleanClassName(){
+    content_class.textContent = ""
+}
+
+// Seta o nome da classe no h3 "content-class"
+function setClassName(className){
+    content_class.textContent = className
 }
 
 // Muda o texto interto e a visibidade das opções de "Ativos / Inativos" para "Voltar"
@@ -158,6 +171,7 @@ function loadUsersLogic(user){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
     setUser(user, tr);
+    cleanClassName()
     createIconsUsers(tdActions, user);
     tr.appendChild(tdActions);
     usersList.appendChild(tr);
@@ -280,7 +294,7 @@ function createCoursesStructure(){
 function loadCoursesLogic(course){
     const tr = document.createElement('tr');
     setCourses(course, tr)
-    
+    setClassName("Cursos")
     const tdActions = document.createElement('td');
     tr.appendChild(tdActions);
     usersList.appendChild(tr);
@@ -358,7 +372,7 @@ function setSales(sale, tr){
 function loadSalesLogic(sale){
     // Criando a estrutura HTML para cada compra
     const tr = document.createElement('tr');
-
+    setClassName("Vendas")
     setSales(sale, tr)
     
     // Coluna com os ícones de ação (editar e deletar)
@@ -447,6 +461,7 @@ function setPurchases(purchase, tr){
 function loadPurchasesLogic(purchase){
     const tr = document.createElement('tr');
     setPurchases(purchase, tr)
+    setClassName("Compras")
 
     const tdActions = document.createElement('td');
     tr.appendChild(tdActions);

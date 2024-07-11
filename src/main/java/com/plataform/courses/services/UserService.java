@@ -1,6 +1,7 @@
 package com.plataform.courses.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.plataform.courses.model.dto.UserCreateDTO;
 import com.plataform.courses.model.dto.UserUpdateDTO;
+import com.plataform.courses.model.entity.Course;
 import com.plataform.courses.model.entity.User;
 import com.plataform.courses.repository.UserRepository;
 import com.plataform.courses.services.exceptions.BadWordException;
@@ -24,6 +26,9 @@ public class UserService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CourseService courseService;
 
     private static String UNTANTED_CONTENT = "Conteúdo indesejado detectado";
 
@@ -129,11 +134,20 @@ public class UserService {
         return this.userRepository.save(newObj);
     }
 
+    @Transactional
+    public void makeCoursesRelatedInactive(User user){
+        List<Course> courses = new ArrayList<Course>(user.getCourses());
+        for (Course course : courses){
+            this.courseService.soft_delete(course.getId());;
+        }
+    }
+
     public void soft_delete(Long id){
         User obj = findById(id);
         checkIfIsImmutable(obj, NOT_PERMISSION_DELETE);
         obj = makeUserInactive(obj);
         this.userRepository.save(obj);
+        makeCoursesRelatedInactive(obj);
     }
 
     public List<User> getAll() {

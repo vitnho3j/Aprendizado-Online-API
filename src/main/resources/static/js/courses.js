@@ -12,8 +12,21 @@ const option_active = document.getElementById("option-active");
 // Pega a opção de cursos inativos no html
 const option_inative = document.getElementById("options-inative-container");
 
+// Pega o h3 que informa qual classe de um ícone clicado
+const content_class = document.getElementById("content-class")
+
 // Guarda o id do curso clicado quando um click é executado em um dos ícones na tabela (Compras, vendas, edit ou delete)
 var courseClicked 
+
+// Limpa o h3 do className quando o botão voltar é clicado
+function cleanClassName(){
+    content_class.textContent = ""
+}
+
+// Seta o nome da classe no h3 "content-class"
+function setClassName(className){
+    content_class.textContent = className
+}
 
 
 // Faz com que "tr-principal" e "courses" sejam limpos para adição de novos dados
@@ -186,6 +199,7 @@ function loadCoursesLogic(course){
     const tr = document.createElement('tr');
     const tdActions = document.createElement('td');
     setCourse(course, tr);
+    cleanClassName()
     createIconsCourses(tdActions, course);
     tr.appendChild(tdActions);
     coursesList.appendChild(tr);
@@ -307,6 +321,7 @@ function loadSalesLogic(sale){
     // Criando a estrutura HTML para cada venda
     const tr = document.createElement('tr');
 
+    setClassName("Vendas")
     setSales(sale, tr)
     
     // Coluna com os ícones de ação (editar e deletar)
@@ -395,7 +410,7 @@ function setPurchases(purchase, tr){
 function loadPurchasesLogic(purchase){
     const tr = document.createElement('tr');
     setPurchases(purchase, tr)
-
+    setClassName("Compras")
     const tdActions = document.createElement('td');
     tr.appendChild(tdActions);
     coursesList.appendChild(tr);

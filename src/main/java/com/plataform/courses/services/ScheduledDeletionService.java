@@ -34,7 +34,9 @@
 //     @Transactional
 //     @Scheduled(fixedRate = 30000) // 2 * 60 * 60 * 1000
 //     public void deleteNonImmutableSales(){
+//         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 //         this.saleRepository.deleteByImmutableFalse();
+//         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 //     }
 
 //     @Transactional
