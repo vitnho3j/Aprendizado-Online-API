@@ -338,11 +338,14 @@ function createSalesStructure(){
     const thId = document.createElement("th");
     const thDate = document.createElement("th");
     const thValue = document.createElement("th");
+    const thCourse = document.createElement("th");
     thDate.textContent = "Data";
     thValue.textContent = "Valor";
     thId.textContent = "Id";
+    thCourse.textContent = "Curso"
     tr_principal.appendChild(thId);
     tr_principal.appendChild(thDate);
+    tr_principal.appendChild(thCourse)
     tr_principal.appendChild(thValue);
 }
 
@@ -360,6 +363,11 @@ function setSales(sale, tr){
     const date = new Date(sale.timestamp[2], sale.timestamp[1], sale.timestamp[0], sale.timestamp[3], sale.timestamp[4], sale.timestamp[5]);
     tdTimestamp.textContent = date;
     tr.appendChild(tdTimestamp);
+
+    // Coluna com o curso vendido
+    const tdCourse = document.createElement('td');
+    tdCourse.textContent = sale.course.id;
+    tr.appendChild(tdCourse);
 
     // Coluna com o valor da compra
     const tdValue = document.createElement('td');
