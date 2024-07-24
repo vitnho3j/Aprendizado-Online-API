@@ -1,5 +1,7 @@
 package com.plataform.courses.model.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -29,6 +31,8 @@ public class CourseUpdateDTO {
 
     @Positive
     @NotNull()
+    @Min(value = 5)
+    @Max(value = 1000)
     private Float price;
 
 }
