@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 @Service
 public class SaleService {
 
-    private static final Integer MAX_IMMUTABLE_RECORDS = 3;
+    private static final Integer MAX_IMMUTABLE_RECORDS = 5;
 
     private static String SALE_INATIVE_USER = "Você não pode criar uma venda para um usuário inativo";
 
