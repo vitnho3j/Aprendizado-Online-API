@@ -1,5 +1,8 @@
+const baseURL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
 const config = {
-    baseURL: "http://localhost:8080/api"
+    baseURL: baseURL
 }
 
 export default config;
+
