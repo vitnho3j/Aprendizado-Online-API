@@ -94,6 +94,11 @@
     font-weight: 400;
   }
   
+  .schedule{
+    font-size: 1.5rem;
+    color: red;
+  }
+
   .notfound a {
     font-family: 'Cabin', sans-serif;
     display: inline-block;

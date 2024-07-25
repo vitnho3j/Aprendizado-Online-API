@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <meta name="base-url" th:content="${baseURL}">
+    <meta name="base-url-schedule" th:content="${baseURL_schedule}">
         <title>Aprendizado Online</title>
 	    <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -108,6 +109,7 @@
 
             </div>
 		     <div class="xp-breadcrumbbar text-center">
+                <h1 class="schedule"> ATENÇÃO, TODOS OS DADOS NÃO PRIMÁRIOS DESTA APLICAÇÃO SERÃO EXCLUIDOS EM: <span id="timer"></span></h1>
                 <h4 class="page-title">Aprendizado Online</h4>  
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Usuários</a></li>
@@ -265,6 +267,7 @@
    <script>window.gtranslateSettings = {"default_language":"pt","languages":["pt","en"],"wrapper_selector":".gtranslate_wrapper","alt_flags":{"en":"usa","pt":"brazil"}}</script>
    <script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
    <script type="module" src="js/config.js"></script>
+   <script type="module" src="js/timer.js"></script>
   
   <script type="text/javascript">
         
