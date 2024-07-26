@@ -15,7 +15,7 @@ public class MainController {
     @Value("${baseURL}")
     String baseURL_schedule;
     
-    private static final long FIXED_RATE = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+    private static final long FIXED_RATE = 86400000; // 2 hours in milliseconds
     private static final long START_TIME = System.currentTimeMillis();
 
     @GetMapping({"/users", "/", "home", "index"})

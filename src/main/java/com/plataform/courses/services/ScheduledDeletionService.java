@@ -32,7 +32,7 @@ public class ScheduledDeletionService {
     private PurchaseRepository purchaseRepository;
 
     @Transactional
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000) // 2 * 60 * 60 * 1000
+    @Scheduled(fixedRate = 86400000) // 24 horas em milissegundos
     public void deleteNonImmutableSales(){
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         this.saleRepository.deleteByImmutableFalse();
@@ -40,7 +40,7 @@ public class ScheduledDeletionService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000) // 2 * 60 * 60 * 1000
+    @Scheduled(fixedRate = 86400000) // 24 horas em milissegundos
     public void deleteNonImmutableUsers(){
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         this.userRepository.deleteByImmutableFalse();
@@ -48,7 +48,7 @@ public class ScheduledDeletionService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000) // 2 * 60 * 60 * 1000
+    @Scheduled(fixedRate = 86400000) // 24 horas em milissegundos
     public void deleteNonImmutableCourses(){
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         this.courseRepository.deleteByImmutableFalse();
@@ -56,7 +56,7 @@ public class ScheduledDeletionService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000) // 2 * 60 * 60 * 1000
+    @Scheduled(fixedRate = 86400000) // 24 horas em milissegundos
     public void deleteNonImmutablePurchases(){
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         this.purchaseRepository.deleteByImmutableFalse();

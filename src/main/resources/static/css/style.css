@@ -99,6 +99,11 @@
     color: red;
   }
 
+  .schedule#reloading{
+    font-size: 1.5rem;
+    color: rgb(12, 211, 12);
+  }
+
   .notfound a {
     font-family: 'Cabin', sans-serif;
     display: inline-block;
